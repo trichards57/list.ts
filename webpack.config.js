@@ -4,8 +4,11 @@ const TerserPlugin = require('terser-webpack-plugin')
 
 module.exports = {
   entry: {
-    list: './src/index.js',
-    'list.min': './src/index.js',
+    list: './src/index.ts',
+    'list.min': './src/index.ts',
+  },
+  resolve: {
+    extensions: ['.ts', '.js'],
   },
   output: {
     path: __dirname + '/dist',
@@ -15,6 +18,11 @@ module.exports = {
   devtool: 'cheap-module-source-map',
   module: {
     rules: [
+      {
+        test: /\.tsx?$/,
+        use: 'ts-loader',
+        exclude: /node_modules/,
+      },
       {
         test: /\.js$/,
         exclude: /(node_modules)/,
