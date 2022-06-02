@@ -1,4 +1,4 @@
-module.exports = function (list) {
+export default function (list) {
   var buttons = {
     els: undefined,
     clear: function () {

@@ -1,4 +1,4 @@
-module.exports = function (list) {
+export default function (list) {
   var Item = require('./item')(list)
 
   var getChildren = function (parent) {

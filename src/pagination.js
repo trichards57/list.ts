@@ -1,8 +1,8 @@
-var classes = require('./utils/classes'),
-  events = require('./utils/events'),
-  List = require('./index')
+import classes from './utils/classes'
+import { bind } from './utils/events'
+import List from './index'
 
-module.exports = function (list) {
+export default function (list) {
   var isHidden = false
 
   var refresh = function (pagingList, options) {
@@ -91,7 +91,7 @@ module.exports = function (list) {
       sortClass: 'pagination-sort-that-is-not-supposed-to-exist',
     })
 
-    events.bind(pagingList.listContainer, 'click', function (e) {
+    bind(pagingList.listContainer, 'click', function (e) {
       var target = e.target || e.srcElement,
         page = list.utils.getAttribute(target, 'data-page'),
         i = list.utils.getAttribute(target, 'data-i')

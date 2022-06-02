@@ -1,11 +1,10 @@
-var classes = require('./utils/classes'),
-  events = require('./utils/events'),
-  extend = require('./utils/extend'),
-  toString = require('./utils/to-string'),
-  getByClass = require('./utils/get-by-class'),
-  fuzzy = require('./utils/fuzzy')
+import { bind } from './utils/events'
+import extend from './utils/extend'
+import toString from './utils/to-string'
+import getByClass from './utils/get-by-class'
+import fuzzy from './utils/fuzzy'
 
-module.exports = function (list, options) {
+export default function (list, options) {
   options = options || {}
 
   options = extend(
@@ -55,7 +54,7 @@ module.exports = function (list, options) {
     },
   }
 
-  events.bind(
+  bind(
     getByClass(list.listContainer, options.searchClass),
     'keyup',
     list.utils.events.debounce(function (e) {

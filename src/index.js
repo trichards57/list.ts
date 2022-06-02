@@ -1,19 +1,19 @@
-var naturalSort = require('string-natural-compare'),
-  getByClass = require('./utils/get-by-class'),
-  extend = require('./utils/extend'),
-  indexOf = require('./utils/index-of'),
-  events = require('./utils/events'),
-  toString = require('./utils/to-string'),
-  classes = require('./utils/classes'),
-  getAttribute = require('./utils/get-attribute'),
-  toArray = require('./utils/to-array')
+import naturalSort from 'string-natural-compare'
+import getByClass from './utils/get-by-class'
+import extend from './utils/extend'
+import indexOf from './utils/index-of'
+import events from './utils/events'
+import toString from './utils/to-string'
+import classes from './utils/classes'
+import getAttribute from './utils/get-attribute'
+import toArray from './utils/to-array'
 
-module.exports = function (id, options, values) {
+export default function (id, options, values) {
   var self = this,
     init,
     Item = require('./item')(self),
     addAsync = require('./add-async')(self),
-    initPagination = require('./pagination')(self)
+    initPagination = require('./pagination').default(self)
 
   init = {
     start: function () {
@@ -51,11 +51,11 @@ module.exports = function (id, options, values) {
       }
       self.list = getByClass(self.listContainer, self.listClass, true)
 
-      self.parse = require('./parse')(self)
-      self.templater = require('./templater')(self)
-      self.search = require('./search')(self)
+      self.parse = require('./parse').default(self)
+      self.templater = require('./templater').default(self)
+      self.search = require('./search').default(self)
       self.filter = require('./filter')(self)
-      self.sort = require('./sort')(self)
+      self.sort = require('./sort').default(self)
       self.fuzzySearch = require('./fuzzy-search')(self, options.fuzzySearch)
 
       this.handlers()

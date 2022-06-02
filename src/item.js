@@ -1,4 +1,4 @@
-module.exports = function (list) {
+export default function (list) {
   return function (initValues, element, notCreate) {
     var item = this
 
@@ -7,7 +7,7 @@ module.exports = function (list) {
     this.found = false // Show if list.searched == true and this.found == true
     this.filtered = false // Show if list.filtered == true and this.filtered == true
 
-    var init = function (initValues, element, notCreate) {
+    function init(initValues, element, notCreate) {
       if (element === undefined) {
         if (notCreate) {
           item.values(initValues, notCreate)

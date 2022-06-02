@@ -1,5 +1,5 @@
-module.exports = function (list) {
-  var item, text, columns, searchString, customSearch
+export default function (list) {
+  var columns, searchString, customSearch
 
   var prepare = {
     resetList: function () {
