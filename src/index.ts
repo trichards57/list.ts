@@ -2,13 +2,12 @@ import naturalSort from 'string-natural-compare'
 import getByClass from './utils/get-by-class'
 import extend from './utils/extend'
 import indexOf from './utils/index-of'
-import events from './utils/events'
+import * as events from './utils/events'
 import toString from './utils/to-string'
-import classes from './utils/classes'
 import getAttribute from './utils/get-attribute'
 import toArray from './utils/to-array'
 
-export default function (id, options, values) {
+export default function (id: string, options: { pagination: boolean | [{}]; fuzzySearch: {} }, values: []) {
   var self = this,
     init,
     Item = require('./item')(self),
@@ -38,7 +37,6 @@ export default function (id, options, values) {
         events: events,
         toString: toString,
         naturalSort: naturalSort,
-        classes: classes,
         getAttribute: getAttribute,
         toArray: toArray,
       }
@@ -78,11 +76,10 @@ export default function (id, options, values) {
       }
     },
     pagination: function () {
-      if (options.pagination !== undefined) {
+      if (options.pagination !== undefined && options.pagination !== false) {
         if (options.pagination === true) {
           options.pagination = [{}]
-        }
-        if (options.pagination[0] === undefined) {
+        } else if (options.pagination[0] === undefined) {
           options.pagination = [options.pagination]
         }
         for (var i = 0, il = options.pagination.length; i < il; i++) {
@@ -115,23 +112,23 @@ export default function (id, options, values) {
   /*
    * Add object to list
    */
-  this.add = function (values, callback) {
-    if (values.length === 0) {
+  this.add = function (values: {} | {}[], callback?: () => void) {
+    const vals = Array.isArray(values) ? values : [values]
+
+    if (vals.length === 0) {
       return
     }
     if (callback) {
-      addAsync(values.slice(0), callback)
+      addAsync(vals.slice(0), callback)
       return
     }
     var added = [],
       notCreate = false
-    if (values[0] === undefined) {
-      values = [values]
-    }
-    for (var i = 0, il = values.length; i < il; i++) {
+
+    for (var i = 0, il = vals.length; i < il; i++) {
       var item = null
       notCreate = self.items.length > self.page ? true : false
-      item = new Item(values[i], undefined, notCreate)
+      item = new Item(vals[i], undefined, notCreate)
       self.items.push(item)
       added.push(item)
     }
@@ -139,7 +136,7 @@ export default function (id, options, values) {
     return added
   }
 
-  this.show = function (i, page) {
+  this.show = function (i: number, page: number) {
     this.i = i
     this.page = page
     self.update()
@@ -150,7 +147,7 @@ export default function (id, options, values) {
    * Loops through the list and removes objects where
    * property "valuename" === value
    */
-  this.remove = function (valueName, value, options) {
+  this.remove = function (valueName: string, value: {}, options: {}) {
     var found = 0
     for (var i = 0, il = self.items.length; i < il; i++) {
       if (self.items[i].values()[valueName] == value) {
@@ -168,7 +165,7 @@ export default function (id, options, values) {
   /* Gets the objects in the list which
    * property "valueName" === value
    */
-  this.get = function (valueName, value) {
+  this.get = function (valueName: string, value: {}) {
     var matchedItems = []
     for (var i = 0, il = self.items.length; i < il; i++) {
       var item = self.items[i]
@@ -195,12 +192,12 @@ export default function (id, options, values) {
     return self
   }
 
-  this.on = function (event, callback) {
+  this.on = function (event: string, callback: () => void) {
     self.handlers[event].push(callback)
     return self
   }
 
-  this.off = function (event, callback) {
+  this.off = function (event: string, callback: () => void) {
     var e = self.handlers[event]
     var index = indexOf(e, callback)
     if (index > -1) {
@@ -209,7 +206,7 @@ export default function (id, options, values) {
     return self
   }
 
-  this.trigger = function (event) {
+  this.trigger = function (event: string) {
     var i = self.handlers[event].length
     while (i--) {
       self.handlers[event][i](self)
