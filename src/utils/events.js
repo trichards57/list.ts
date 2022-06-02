@@ -1,7 +1,4 @@
-var bind = window.addEventListener ? 'addEventListener' : 'attachEvent',
-  unbind = window.removeEventListener ? 'removeEventListener' : 'detachEvent',
-  prefix = bind !== 'addEventListener' ? 'on' : '',
-  toArray = require('./to-array')
+import toArray from './to-array'
 
 /**
  * Bind `el` event `type` to `fn`.
@@ -13,10 +10,10 @@ var bind = window.addEventListener ? 'addEventListener' : 'attachEvent',
  * @api public
  */
 
-exports.bind = function (el, type, fn, capture) {
+export function bind(el, type, fn, capture) {
   el = toArray(el)
   for (var i = 0, il = el.length; i < il; i++) {
-    el[i][bind](prefix + type, fn, capture || false)
+    el[i].addEventListener(type, fn, capture || false)
   }
 }
 
@@ -30,10 +27,10 @@ exports.bind = function (el, type, fn, capture) {
  * @api public
  */
 
-exports.unbind = function (el, type, fn, capture) {
+export function unbind(el, type, fn, capture) {
   el = toArray(el)
   for (var i = 0, il = el.length; i < il; i++) {
-    el[i][unbind](prefix + type, fn, capture || false)
+    el[i].removeEventListener(type, fn, capture || false)
   }
 }
 
@@ -49,7 +46,7 @@ exports.unbind = function (el, type, fn, capture) {
  * @api public
  */
 
-exports.debounce = function (fn, wait, immediate) {
+export function debounce(fn, wait, immediate) {
   var timeout
   return wait
     ? function () {
