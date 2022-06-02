@@ -12,7 +12,7 @@
  * @api public
  */
 
-var getElementsByClassName = function (container, className, single) {
+function getElementsByClassName(container, className, single) {
   if (single) {
     return container.getElementsByClassName(className)[0]
   } else {
@@ -20,7 +20,7 @@ var getElementsByClassName = function (container, className, single) {
   }
 }
 
-var querySelector = function (container, className, single) {
+function querySelector(container, className, single) {
   className = '.' + className
   if (single) {
     return container.querySelector(className)
@@ -29,9 +29,8 @@ var querySelector = function (container, className, single) {
   }
 }
 
-var polyfill = function (container, className, single) {
-  var classElements = [],
-    tag = '*'
+function polyfill(container, className, single) {
+  var classElements = [], tag = '*'
 
   var els = container.getElementsByTagName(tag)
   var elsLen = els.length
@@ -49,7 +48,7 @@ var polyfill = function (container, className, single) {
   return classElements
 }
 
-module.exports = (function () {
+export default (function () {
   return function (container, className, single, options) {
     options = options || {}
     if ((options.test && options.getElementsByClassName) || (!options.test && document.getElementsByClassName)) {
