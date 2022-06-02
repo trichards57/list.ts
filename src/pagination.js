@@ -1,4 +1,3 @@
-import classes from './utils/classes'
 import { bind } from './utils/events'
 import List from './index'
 
@@ -37,7 +36,7 @@ export default function (list) {
           dotted: false,
         })[0]
         if (className) {
-          classes(item.elm).add(className)
+          item.elm.classList.add(className)
         }
         item.elm.firstChild.setAttribute('data-i', i)
         item.elm.firstChild.setAttribute('data-page', page)
@@ -46,7 +45,7 @@ export default function (list) {
           page: '...',
           dotted: true,
         })[0]
-        classes(item.elm).add('disabled')
+        item.elm.classList.add('disabled')
       }
     }
   }

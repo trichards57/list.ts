@@ -3,17 +3,17 @@ export default function (list) {
     els: undefined,
     clear: function () {
       for (var i = 0, il = buttons.els.length; i < il; i++) {
-        list.utils.classes(buttons.els[i]).remove('asc')
-        list.utils.classes(buttons.els[i]).remove('desc')
+        buttons.els[i].classList.remove('asc')
+        buttons.els[i].classList.remove('desc')
       }
     },
     getOrder: function (btn) {
       var predefinedOrder = list.utils.getAttribute(btn, 'data-order')
       if (predefinedOrder == 'asc' || predefinedOrder == 'desc') {
         return predefinedOrder
-      } else if (list.utils.classes(btn).has('desc')) {
+      } else if (btn.classList.contains('desc')) {
         return 'asc'
-      } else if (list.utils.classes(btn).has('asc')) {
+      } else if (btn.classList.contains('asc')) {
         return 'desc'
       } else {
         return 'asc'
@@ -36,10 +36,10 @@ export default function (list) {
         var predefinedOrder = list.utils.getAttribute(btn, 'data-order')
         if (predefinedOrder == 'asc' || predefinedOrder == 'desc') {
           if (predefinedOrder == options.order) {
-            list.utils.classes(btn).add(options.order)
+            btn.classList.add(options.order)
           }
         } else {
-          list.utils.classes(btn).add(options.order)
+          btn.classList.add(options.order)
         }
       }
     },
