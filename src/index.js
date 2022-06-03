@@ -1,5 +1,4 @@
 var naturalSort = require('string-natural-compare'),
-  extend = require('./utils/extend'),
   events = require('./utils/events'),
   toString = require('./utils/to-string'),
   classes = require('./utils/classes'),
@@ -29,7 +28,6 @@ module.exports = function (id, options, values) {
       self.handlers = { updated: [] }
       self.valueNames = []
       self.utils = {
-        extend: extend,
         events: events,
         toString: toString,
         naturalSort: naturalSort,
@@ -37,7 +35,7 @@ module.exports = function (id, options, values) {
         toArray: toArray,
       }
 
-      self.utils.extend(self, options)
+      Object.assign(self, options);
 
       self.listContainer = typeof id === 'string' ? document.getElementById(id) : id
       if (!self.listContainer) {

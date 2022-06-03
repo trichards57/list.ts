@@ -1,13 +1,11 @@
-var classes = require('./utils/classes'),
-  events = require('./utils/events'),
-  extend = require('./utils/extend'),
+var events = require('./utils/events'),
   toString = require('./utils/to-string'),
   fuzzy = require('./utils/fuzzy')
 
 module.exports = function (list, options) {
   options = options || {}
 
-  options = extend(
+  options = Object.assign(
     {
       location: 0,
       distance: 100,
