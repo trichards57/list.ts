@@ -1,8 +1,6 @@
-const getItem = require("./item");
+const Item = require("./item");
 
 module.exports = (list) => {
-  const Item = getItem(list);
-
   const getChildren = (parent) => {
     const nodes = parent.childNodes;
     const items = [];
@@ -18,7 +16,10 @@ module.exports = (list) => {
 
   const parse = (itemElements, valueNames) => {
     for (let i = 0; i < itemElements.length; i += 1) {
-      list.items.push(new Item(valueNames, itemElements[i]));
+      const item = new Item(valueNames, itemElements[i]);
+      const values = list.templater.get(item, valueNames);
+      item.values(values);
+      list.items.push(item);
     }
   };
 

@@ -1,10 +1,9 @@
 /* eslint-disable no-param-reassign */
-const getItem = require("./item");
+const Item = require("./item");
 const getAddAsync = require("./add-async");
 
 module.exports = function List(id, options, values) {
   const self = this;
-  const Item = getItem(self);
   const addAsync = getAddAsync(self);
   const initPagination = require("./pagination")(self);
 
@@ -116,6 +115,9 @@ module.exports = function List(id, options, values) {
       let item = null;
       notCreate = self.items.length > self.page;
       item = new Item(vals[i], undefined, notCreate);
+
+      if (!notCreate) self.templater.set(item, item.values());
+
       self.items.push(item);
       added.push(item);
     }
@@ -200,6 +202,13 @@ module.exports = function List(id, options, values) {
     return self;
   };
 
+  this.itemVisible = (item) => !!(item.elm && item.elm.parentNode === self.list);
+  this.itemMatches = (item) =>
+    (self.filtered && self.searched && item.found && item.filtered) ||
+    (self.filtered && !self.searched && item.filtered) ||
+    (!self.filtered && self.searched && item.found) ||
+    (!self.filtered && !self.searched);
+
   this.reset = {
     filter() {
       const is = self.items;
@@ -227,15 +236,15 @@ module.exports = function List(id, options, values) {
     self.matchingItems = [];
     self.templater.clear();
     for (let i = 0; i < il; i += 1) {
-      if (is[i].matching() && self.matchingItems.length + 1 >= self.i && self.visibleItems.length < self.page) {
-        is[i].show();
+      if (self.itemMatches(is[i]) && self.matchingItems.length + 1 >= self.i && self.visibleItems.length < self.page) {
+        self.templater.show(is[i]);
         self.visibleItems.push(is[i]);
         self.matchingItems.push(is[i]);
-      } else if (is[i].matching()) {
+      } else if (self.itemMatches(is[i])) {
         self.matchingItems.push(is[i]);
-        is[i].hide();
+        self.templater.hide(is[i]);
       } else {
-        is[i].hide();
+        self.templater.hide(is[i]);
       }
     }
     self.trigger("updated");
