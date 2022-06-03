@@ -1,6 +1,6 @@
 /* eslint-disable no-param-reassign */
 const toString = require("./utils/to-string");
-const events = require("./utils/events");
+const { debounce } = require("./utils/events");
 
 module.exports = (list) => {
   let columns;
@@ -114,24 +114,26 @@ module.exports = (list) => {
   list.handlers.searchStart = list.handlers.searchStart || [];
   list.handlers.searchComplete = list.handlers.searchComplete || [];
 
-  events.bind(
-    list.listContainer.getElementsByClassName(list.searchClass),
-    "keyup",
-    events.debounce((e) => {
-      const alreadyCleared = e.target.value === "" && !list.searched;
-      if (!alreadyCleared) {
-        // If oninput already have resetted the list, do nothing
-        searchMethod(e.target.value);
-      }
-    }, list.searchDelay)
+  Array.from(list.listContainer.getElementsByClassName(list.searchClass)).forEach((el) =>
+    el.addEventListener(
+      "keyup",
+      debounce((e) => {
+        const alreadyCleared = e.target.value === "" && !list.searched;
+        if (!alreadyCleared) {
+          // If oninput already have resetted the list, do nothing
+          searchMethod(e.target.value);
+        }
+      }, list.searchDelay)
+    )
   );
 
-  // Used to detect click on HTML5 clear button
-  events.bind(list.listContainer.getElementsByClassName(list.searchClass), "input", (e) => {
-    if (e.target.value === "") {
-      searchMethod("");
-    }
-  });
+  Array.from(list.listContainer.getElementsByClassName(list.searchClass)).forEach((el) =>
+    el.addEventListener("input", (e) => {
+      if (e.target.value === "") {
+        searchMethod("");
+      }
+    })
+  );
 
   return searchMethod;
 };

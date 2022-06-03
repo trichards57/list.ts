@@ -3,7 +3,7 @@ module.exports = class Item {
   _values = {};
 
   found = false; // Show if list.searched == true and this.found == true
-  
+
   filtered = false; // Show if list.filtered == true and this.filtered == true
 
   constructor(initValues, element) {
@@ -14,12 +14,12 @@ module.exports = class Item {
     }
   }
 
-  values = (newValues) => {
+  values(newValues) {
     if (newValues !== undefined) {
       // eslint-disable-next-line no-underscore-dangle
       Object.assign(this._values, newValues);
     }
     // eslint-disable-next-line no-underscore-dangle
     return this._values;
-  };
+  }
 };

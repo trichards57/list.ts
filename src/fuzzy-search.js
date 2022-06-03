@@ -1,4 +1,4 @@
-const events = require("./utils/events");
+const { debounce } = require("./utils/events");
 const toString = require("./utils/to-string");
 const fuzzy = require("./utils/fuzzy");
 
@@ -49,12 +49,13 @@ module.exports = (list, options) => {
     },
   };
 
-  events.bind(
-    list.listContainer.getElementsByClassName(opts.searchClass),
-    "keyup",
-    events.debounce((e) => {
-      list.search(e.target.value, fuzzySearch.search);
-    }, list.searchDelay)
+  Array.from(list.listContainer.getElementsByClassName(opts.searchClass)).forEach((el) =>
+    el.addEventListener(
+      "keyup",
+      debounce((e) => {
+        list.search(e.target.value, fuzzySearch.search);
+      }, list.searchDelay)
+    )
   );
 
   return (str, columns) => {

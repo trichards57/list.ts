@@ -1,20 +1,12 @@
 /* eslint-disable no-bitwise */
 
 module.exports = (text, pattern, options) => {
-  // Aproximately where in the text is the pattern expected to be found?
-  const matchLocation = options.location || 0;
-
-  // Determines how close the match must be to the fuzzy location (specified above). An exact letter match which is 'distance' characters away from the fuzzy location would score as a complete mismatch. A distance of '0' requires the match be at the exact location specified, a threshold of '1000' would require a perfect match to be within 800 characters of the fuzzy location to be found using a 0.8 threshold.
-  const matchDistance = options.distance || 100;
-
-  // At what point does the match algorithm give up. A threshold of '0.0' requires a perfect match (of both letters and location), a threshold of '1.0' would match anything.
-  const matchThreshold = options.threshold || 0.4;
+  const { location, distance, threshold } = { location: 0, distance: 100, threshold: 0.4, ...options };
 
   if (pattern === text) return true; // Exact match
   if (pattern.length > 32) return false; // This algorithm cannot be used
 
   // Set starting location at beginning text and initialise the alphabet.
-  const loc = matchLocation;
   const s = (() => {
     const q = {};
     let i;
@@ -34,22 +26,22 @@ module.exports = (text, pattern, options) => {
   // Accesses loc and pattern through being a closure.
   function matchBitmapScore(e, x) {
     const accuracy = e / pattern.length;
-    const proximity = Math.abs(loc - x);
+    const proximity = Math.abs(location - x);
 
-    if (!matchDistance) {
+    if (!distance) {
       // Dodge divide by zero error.
       return proximity ? 1.0 : accuracy;
     }
-    return accuracy + proximity / matchDistance;
+    return accuracy + proximity / distance;
   }
 
-  let scoreThreshold = matchThreshold; // Highest score beyond which we give up.
-  let bestLoc = text.indexOf(pattern, loc); // Is there a nearby exact match? (speedup)
+  let scoreThreshold = threshold; // Highest score beyond which we give up.
+  let bestLoc = text.indexOf(pattern, location); // Is there a nearby exact match? (speedup)
 
   if (bestLoc !== -1) {
     scoreThreshold = Math.min(matchBitmapScore(0, bestLoc), scoreThreshold);
     // What about in the other direction? (speedup)
-    bestLoc = text.lastIndexOf(pattern, loc + pattern.length);
+    bestLoc = text.lastIndexOf(pattern, location + pattern.length);
 
     if (bestLoc !== -1) {
       scoreThreshold = Math.min(matchBitmapScore(0, bestLoc), scoreThreshold);
@@ -72,7 +64,7 @@ module.exports = (text, pattern, options) => {
     binMin = 0;
     binMid = binMax;
     while (binMin < binMid) {
-      if (matchBitmapScore(d, loc + binMid) <= scoreThreshold) {
+      if (matchBitmapScore(d, location + binMid) <= scoreThreshold) {
         binMin = binMid;
       } else {
         binMax = binMid;
@@ -81,8 +73,8 @@ module.exports = (text, pattern, options) => {
     }
     // Use the result from this iteration as the maximum for the next.
     binMax = binMid;
-    let start = Math.max(1, loc - binMid + 1);
-    const finish = Math.min(loc + binMid, text.length) + pattern.length;
+    let start = Math.max(1, location - binMid + 1);
+    const finish = Math.min(location + binMid, text.length) + pattern.length;
 
     const rd = Array(finish + 2);
     rd[finish + 1] = (1 << d) - 1;
@@ -105,9 +97,9 @@ module.exports = (text, pattern, options) => {
           // Told you so.
           scoreThreshold = score;
           bestLoc = j - 1;
-          if (bestLoc > loc) {
+          if (bestLoc > location) {
             // When passing loc, don't exceed our current distance from loc.
-            start = Math.max(1, 2 * loc - bestLoc);
+            start = Math.max(1, 2 * location - bestLoc);
           } else {
             // Already passed loc, downhill from here on in.
             break;
@@ -116,7 +108,7 @@ module.exports = (text, pattern, options) => {
       }
     }
     // No hope for a (better) match at greater error levels.
-    if (matchBitmapScore(d + 1, loc) > scoreThreshold) {
+    if (matchBitmapScore(d + 1, location) > scoreThreshold) {
       break;
     }
     lastRd = rd;

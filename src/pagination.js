@@ -1,4 +1,3 @@
-const events = require("./utils/events");
 const List = require("./index");
 
 module.exports = (list) => {
@@ -90,7 +89,7 @@ module.exports = (list) => {
       sortClass: "pagination-sort-that-is-not-supposed-to-exist",
     });
 
-    events.bind(pagingList.listContainer, "click", (e) => {
+    pagingList.listContainer.addEventListener("click", (e) => {
       const target = e.target || e.srcElement;
       const page = target.getAttribute("data-page");
       const i = target.getAttribute("data-i");

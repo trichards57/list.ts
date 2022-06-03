@@ -1,7 +1,6 @@
 /* eslint-disable no-param-reassign */
 const naturalSort = require("string-natural-compare");
 const toString = require("./utils/to-string");
-const events = require("./utils/events");
 
 module.exports = (list) => {
   const buttons = {
@@ -104,7 +103,9 @@ module.exports = (list) => {
   list.handlers.sortComplete = list.handlers.sortComplete || [];
 
   buttons.els = list.listContainer.getElementsByClassName(list.sortClass);
-  events.bind(buttons.els, "click", sort);
+
+  Array.from(buttons.els).forEach((el) => el.addEventListener("click", sort));
+
   list.on("searchStart", buttons.clear);
   list.on("filterStart", buttons.clear);
 

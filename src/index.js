@@ -1,7 +1,8 @@
 /* eslint-disable no-underscore-dangle */
 /* eslint-disable no-param-reassign */
 const Item = require("./item");
-const getAddAsync = require("./add-async");
+const Templater = require("./templater");
+const parser = require("./parse");
 
 module.exports = class List {
   constructor(id, options, values) {
@@ -17,7 +18,7 @@ module.exports = class List {
     this.filtered = false;
     this.searchColumns = undefined;
     this.searchDelay = 0;
-    this.handlers = { updated: [] };
+    this.handlers = { updated: [], filterStart: [], filterComplete: [], parseComplete: [] };
     this.valueNames = [];
     this._values = values;
     this._options = options;
@@ -30,10 +31,9 @@ module.exports = class List {
     }
     [this.list] = this.listContainer.getElementsByClassName(this.listClass);
 
-    this.parse = require("./parse")(this);
-    this.templater = require("./templater")(this);
+    this.parse = parser;
+    this.templater = new Templater(this);
     this.search = require("./search")(this);
-    this.filter = require("./filter")(this);
     this.sort = require("./sort")(this);
     this.fuzzySearch = require("./fuzzy-search")(this, options.fuzzySearch);
 
@@ -55,7 +55,7 @@ module.exports = class List {
   }
 
   _items() {
-    this.parse(this.list);
+    this.parse(this);
     if (this._values !== undefined) {
       this.add(this._values);
     }
@@ -86,7 +86,7 @@ module.exports = class List {
     this.matchingItems = [];
     this.searched = false;
     this.filtered = false;
-    this.parse(this.list);
+    this.parse(this);
   }
 
   toJSON() {
@@ -101,14 +101,12 @@ module.exports = class List {
    * Add object to list
    */
   add(vals, callback) {
-    const addAsync = getAddAsync(this);
-
     if (vals.length === 0) {
-      return;
+      return [];
     }
     if (callback) {
-      addAsync(vals.slice(0), callback);
-      return;
+      this.addAsync(vals.slice(0), callback);
+      return null;
     }
     const added = [];
     let notCreate = false;
@@ -127,6 +125,20 @@ module.exports = class List {
     }
     this.update();
     return added;
+  }
+
+  addAsync(values, callback, items) {
+    const valuesToAdd = values.splice(0, 50);
+    let itms = items || [];
+    itms = itms.concat(this.add(valuesToAdd));
+    if (values.length > 0) {
+      setTimeout(() => {
+        this.addAsync(values, callback, itms);
+      }, 1);
+    } else {
+      this.update();
+      callback(itms);
+    }
   }
 
   show(i, page) {
@@ -222,7 +234,7 @@ module.exports = class List {
     }
     return this;
   }
-  
+
   resetSearch() {
     const is = this.items;
     let il = is.length;
@@ -253,5 +265,27 @@ module.exports = class List {
     }
     this.trigger("updated");
     return this;
+  }
+
+  filter(filterFunction) {
+    this.trigger("filterStart");
+    this.i = 1; // Reset paging
+    this.resetFilter();
+    if (filterFunction === undefined) {
+      this.filtered = false;
+    } else {
+      this.filtered = true;
+      for (let i = 0; i < this.items.length; i += 1) {
+        const item = this.items[i];
+        if (filterFunction(item)) {
+          item.filtered = true;
+        } else {
+          item.filtered = false;
+        }
+      }
+    }
+    this.update();
+    this.trigger("filterComplete");
+    return this.visibleItems;
   }
 };
