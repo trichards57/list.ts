@@ -8,7 +8,7 @@ module.exports = (list) => {
   return (filterFunction) => {
     list.trigger("filterStart");
     list.i = 1; // Reset paging
-    list.reset.filter();
+    list.resetFilter();
     if (filterFunction === undefined) {
       list.filtered = false;
     } else {

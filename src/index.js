@@ -1,104 +1,108 @@
+/* eslint-disable no-underscore-dangle */
 /* eslint-disable no-param-reassign */
 const Item = require("./item");
 const getAddAsync = require("./add-async");
 
-module.exports = function List(id, options, values) {
-  const self = this;
-  const addAsync = getAddAsync(self);
-  const initPagination = require("./pagination")(self);
+module.exports = class List {
+  constructor(id, options, values) {
+    this.listClass = "list";
+    this.searchClass = "search";
+    this.sortClass = "sort";
+    this.page = 10000;
+    this.i = 1;
+    this.items = [];
+    this.visibleItems = [];
+    this.matchingItems = [];
+    this.searched = false;
+    this.filtered = false;
+    this.searchColumns = undefined;
+    this.searchDelay = 0;
+    this.handlers = { updated: [] };
+    this.valueNames = [];
+    this._values = values;
+    this._options = options;
 
-  const init = {
-    start() {
-      self.listClass = "list";
-      self.searchClass = "search";
-      self.sortClass = "sort";
-      self.page = 10000;
-      self.i = 1;
-      self.items = [];
-      self.visibleItems = [];
-      self.matchingItems = [];
-      self.searched = false;
-      self.filtered = false;
-      self.searchColumns = undefined;
-      self.searchDelay = 0;
-      self.handlers = { updated: [] };
-      self.valueNames = [];
+    Object.assign(this, options);
 
-      Object.assign(self, options);
+    this.listContainer = typeof id === "string" ? document.getElementById(id) : id;
+    if (!this.listContainer) {
+      return;
+    }
+    [this.list] = this.listContainer.getElementsByClassName(this.listClass);
 
-      self.listContainer = typeof id === "string" ? document.getElementById(id) : id;
-      if (!self.listContainer) {
-        return;
+    this.parse = require("./parse")(this);
+    this.templater = require("./templater")(this);
+    this.search = require("./search")(this);
+    this.filter = require("./filter")(this);
+    this.sort = require("./sort")(this);
+    this.fuzzySearch = require("./fuzzy-search")(this, options.fuzzySearch);
+
+    this._handlers();
+    this._items();
+    this._pagination();
+
+    this.update();
+  }
+
+  _handlers() {
+    const keys = Object.keys(this.handlers);
+
+    for (let i = 0; i < keys.length; i += 1) {
+      if (this[keys[i]] && Object.prototype.hasOwnProperty.call(this.handlers, keys[i])) {
+        this.on(keys[i], this[keys[i]]);
       }
-      [self.list] = self.listContainer.getElementsByClassName(self.listClass);
+    }
+  }
 
-      self.parse = require("./parse")(self);
-      self.templater = require("./templater")(self);
-      self.search = require("./search")(self);
-      self.filter = require("./filter")(self);
-      self.sort = require("./sort")(self);
-      self.fuzzySearch = require("./fuzzy-search")(self, options.fuzzySearch);
+  _items() {
+    this.parse(this.list);
+    if (this._values !== undefined) {
+      this.add(this._values);
+    }
+  }
 
-      this.handlers();
-      this.items();
-      this.pagination();
+  _pagination() {
+    const initPagination = require("./pagination")(this);
 
-      self.update();
-    },
-    handlers() {
-      const keys = Object.keys(self.handlers);
-
-      for (let i = 0; i < keys.length; i += 1) {
-        if (self[keys[i]] && Object.prototype.hasOwnProperty.call(self.handlers, keys[i])) {
-          self.on(keys[i], self[keys[i]]);
-        }
+    if (this._options.pagination !== undefined) {
+      if (this._options.pagination === true) {
+        this._options.pagination = [{}];
       }
-    },
-    items() {
-      self.parse(self.list);
-      if (values !== undefined) {
-        self.add(values);
+      if (this._options.pagination[0] === undefined) {
+        this._options.pagination = [this._options.pagination];
       }
-    },
-    pagination() {
-      if (options.pagination !== undefined) {
-        if (options.pagination === true) {
-          options.pagination = [{}];
-        }
-        if (options.pagination[0] === undefined) {
-          options.pagination = [options.pagination];
-        }
-        for (let i = 0; i < options.pagination.length; i += 1) {
-          initPagination(options.pagination[i]);
-        }
+      for (let i = 0; i < this._options.pagination.length; i += 1) {
+        initPagination(this._options.pagination[i]);
       }
-    },
-  };
+    }
+  }
 
   /*
    * Re-parse the List, use if html have changed
    */
-  this.reIndex = () => {
-    self.items = [];
-    self.visibleItems = [];
-    self.matchingItems = [];
-    self.searched = false;
-    self.filtered = false;
-    self.parse(self.list);
-  };
+  reIndex() {
+    this.items = [];
+    this.visibleItems = [];
+    this.matchingItems = [];
+    this.searched = false;
+    this.filtered = false;
+    this.parse(this.list);
+  }
 
-  this.toJSON = () => {
+  toJSON() {
     const json = [];
-    for (let i = 0; i < self.items.length; i += 1) {
-      json.push(self.items[i].values());
+    for (let i = 0; i < this.items.length; i += 1) {
+      json.push(this.items[i].values());
     }
     return json;
-  };
+  }
 
   /*
    * Add object to list
    */
-  this.add = (vals, callback) => {
+  add(vals, callback) {
+    const addAsync = getAddAsync(this);
+
     if (vals.length === 0) {
       return;
     }
@@ -113,143 +117,141 @@ module.exports = function List(id, options, values) {
     }
     for (let i = 0; i < vals.length; i += 1) {
       let item = null;
-      notCreate = self.items.length > self.page;
+      notCreate = this.items.length > this.page;
       item = new Item(vals[i], undefined, notCreate);
 
-      if (!notCreate) self.templater.set(item, item.values());
+      if (!notCreate) this.templater.set(item, item.values());
 
-      self.items.push(item);
+      this.items.push(item);
       added.push(item);
     }
-    self.update();
+    this.update();
     return added;
-  };
+  }
 
-  this.show = function (i, page) {
+  show(i, page) {
     this.i = i;
     this.page = page;
-    self.update();
-    return self;
-  };
+    this.update();
+    return this;
+  }
 
   /* Removes object from list.
    * Loops through the list and removes objects where
    * property "valuename" === value
    */
-  this.remove = (valueName, value, opts) => {
+  remove(valueName, value, opts) {
     let found = 0;
-    let il = self.items.length;
+    let il = this.items.length;
     for (let i = 0; i < il; i += 1) {
-      if (self.items[i].values()[valueName] === value) {
-        self.templater.remove(self.items[i], opts);
-        self.items.splice(i, 1);
+      if (this.items[i].values()[valueName] === value) {
+        this.templater.remove(this.items[i], opts);
+        this.items.splice(i, 1);
         il -= 1;
         i -= 1;
         found += 1;
       }
     }
-    self.update();
+    this.update();
     return found;
-  };
+  }
 
   /* Gets the objects in the list which
    * property "valueName" === value
    */
-  this.get = (valueName, value) => {
+  get(valueName, value) {
     const matchedItems = [];
-    for (let i = 0; i < self.items.length; i += 1) {
-      const item = self.items[i];
+    for (let i = 0; i < this.items.length; i += 1) {
+      const item = this.items[i];
       if (item.values()[valueName] === value) {
         matchedItems.push(item);
       }
     }
     return matchedItems;
-  };
+  }
 
   /*
    * Get size of the list
    */
-  this.size = () => self.items.length;
+  size = () => this.items.length;
 
   /*
    * Removes all items from the list
    */
-  this.clear = () => {
-    self.templater.clear();
-    self.items = [];
-    return self;
-  };
+  clear() {
+    this.templater.clear();
+    this.items = [];
+    return this;
+  }
 
-  this.on = (event, callback) => {
-    self.handlers[event].push(callback);
-    return self;
-  };
+  on(event, callback) {
+    this.handlers[event].push(callback);
+    return this;
+  }
 
-  this.off = (event, callback) => {
-    const e = self.handlers[event];
+  off(event, callback) {
+    const e = this.handlers[event];
     const index = e.indexOf(callback);
     if (index > -1) {
       e.splice(index, 1);
     }
-    return self;
-  };
+    return this;
+  }
 
-  this.trigger = (event) => {
-    let i = self.handlers[event].length;
+  trigger(event) {
+    let i = this.handlers[event].length;
     while (i--) {
-      self.handlers[event][i](self);
+      this.handlers[event][i](this);
     }
-    return self;
-  };
+    return this;
+  }
 
-  this.itemVisible = (item) => !!(item.elm && item.elm.parentNode === self.list);
-  this.itemMatches = (item) =>
-    (self.filtered && self.searched && item.found && item.filtered) ||
-    (self.filtered && !self.searched && item.filtered) ||
-    (!self.filtered && self.searched && item.found) ||
-    (!self.filtered && !self.searched);
+  itemVisible = (item) => !!(item.elm && item.elm.parentNode === this.list);
 
-  this.reset = {
-    filter() {
-      const is = self.items;
-      let il = is.length;
-      while (il--) {
-        is[il].filtered = false;
-      }
-      return self;
-    },
-    search() {
-      const is = self.items;
-      let il = is.length;
-      while (il--) {
-        is[il].found = false;
-      }
-      return self;
-    },
-  };
+  itemMatches = (item) =>
+    (this.filtered && this.searched && item.found && item.filtered) ||
+    (this.filtered && !this.searched && item.filtered) ||
+    (!this.filtered && this.searched && item.found) ||
+    (!this.filtered && !this.searched);
 
-  this.update = function () {
-    const is = self.items;
+  resetFilter() {
+    const is = this.items;
+    let il = is.length;
+    while (il--) {
+      is[il].filtered = false;
+    }
+    return this;
+  }
+  
+  resetSearch() {
+    const is = this.items;
+    let il = is.length;
+    while (il--) {
+      is[il].found = false;
+    }
+    return this;
+  }
+
+  update() {
+    const is = this.items;
     const il = is.length;
 
-    self.visibleItems = [];
-    self.matchingItems = [];
-    self.templater.clear();
+    this.visibleItems = [];
+    this.matchingItems = [];
+    this.templater.clear();
     for (let i = 0; i < il; i += 1) {
-      if (self.itemMatches(is[i]) && self.matchingItems.length + 1 >= self.i && self.visibleItems.length < self.page) {
-        self.templater.show(is[i]);
-        self.visibleItems.push(is[i]);
-        self.matchingItems.push(is[i]);
-      } else if (self.itemMatches(is[i])) {
-        self.matchingItems.push(is[i]);
-        self.templater.hide(is[i]);
+      if (this.itemMatches(is[i]) && this.matchingItems.length + 1 >= this.i && this.visibleItems.length < this.page) {
+        this.templater.show(is[i]);
+        this.visibleItems.push(is[i]);
+        this.matchingItems.push(is[i]);
+      } else if (this.itemMatches(is[i])) {
+        this.matchingItems.push(is[i]);
+        this.templater.hide(is[i]);
       } else {
-        self.templater.hide(is[i]);
+        this.templater.hide(is[i]);
       }
     }
-    self.trigger("updated");
-    return self;
-  };
-
-  init.start();
+    this.trigger("updated");
+    return this;
+  }
 };

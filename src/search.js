@@ -82,7 +82,7 @@ module.exports = (list) => {
     },
     // Removed search.item() and search.values()
     reset() {
-      list.reset.search();
+      list.resetSearch();
       list.searched = false;
     },
   };
