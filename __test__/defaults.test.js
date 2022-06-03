@@ -56,7 +56,6 @@ describe('Defaults', function () {
   it('should have all helper methods', function () {
     expect(list.utils.classes).toBeInstanceOf(Function)
     expect(list.utils.getAttribute).toBeInstanceOf(Function)
-    expect(list.utils.getByClass).toBeInstanceOf(Function)
     expect(list.utils.naturalSort).toBeInstanceOf(Function)
     expect(list.utils.events.bind).toBeInstanceOf(Function)
     expect(list.utils.events.unbind).toBeInstanceOf(Function)

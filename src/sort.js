@@ -96,7 +96,7 @@ module.exports = function (list) {
   list.handlers.sortStart = list.handlers.sortStart || []
   list.handlers.sortComplete = list.handlers.sortComplete || []
 
-  buttons.els = list.utils.getByClass(list.listContainer, list.sortClass)
+  buttons.els = list.listContainer.getElementsByClassName(list.sortClass)
   list.utils.events.bind(buttons.els, 'click', sort)
   list.on('searchStart', buttons.clear)
   list.on('filterStart', buttons.clear)

@@ -112,7 +112,7 @@ module.exports = function (list) {
   list.handlers.searchComplete = list.handlers.searchComplete || []
 
   list.utils.events.bind(
-    list.utils.getByClass(list.listContainer, list.searchClass),
+    list.listContainer.getElementsByClassName(list.searchClass),
     'keyup',
     list.utils.events.debounce(function (e) {
       var target = e.target || e.srcElement, // IE have srcElement
@@ -125,7 +125,7 @@ module.exports = function (list) {
   )
 
   // Used to detect click on HTML5 clear button
-  list.utils.events.bind(list.utils.getByClass(list.listContainer, list.searchClass), 'input', function (e) {
+  list.utils.events.bind(list.listContainer.getElementsByClassName(list.searchClass), 'input', function (e) {
     var target = e.target || e.srcElement
     if (target.value === '') {
       searchMethod('')

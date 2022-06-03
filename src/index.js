@@ -1,5 +1,4 @@
 var naturalSort = require('string-natural-compare'),
-  getByClass = require('./utils/get-by-class'),
   extend = require('./utils/extend'),
   indexOf = require('./utils/index-of'),
   events = require('./utils/events'),
@@ -32,7 +31,6 @@ module.exports = function (id, options, values) {
       self.handlers = { updated: [] }
       self.valueNames = []
       self.utils = {
-        getByClass: getByClass,
         extend: extend,
         indexOf: indexOf,
         events: events,
@@ -49,7 +47,7 @@ module.exports = function (id, options, values) {
       if (!self.listContainer) {
         return
       }
-      self.list = getByClass(self.listContainer, self.listClass, true)
+      self.list = self.listContainer.getElementsByClassName(self.listClass)[0]
 
       self.parse = require('./parse')(self)
       self.templater = require('./templater')(self)

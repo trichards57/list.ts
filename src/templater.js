@@ -48,12 +48,12 @@ var Templater = function (list) {
           el.setAttribute('data-' + valueName.data[j], '')
         }
       } else if (valueName.attr && valueName.name) {
-        elm = list.utils.getByClass(el, valueName.name, true)
+        elm = el.getElementsByClassName(valueName.name)[0]
         if (elm) {
           elm.setAttribute(valueName.attr, '')
         }
       } else {
-        elm = list.utils.getByClass(el, valueName, true)
+        elm = el.getElementsByClassName(valueName)[0]
         if (elm) {
           elm.innerHTML = ''
         }
@@ -113,12 +113,12 @@ var Templater = function (list) {
     if (valueName.data) {
       item.elm.setAttribute('data-' + valueName.data, value)
     } else if (valueName.attr && valueName.name) {
-      elm = list.utils.getByClass(item.elm, valueName.name, true)
+      elm = item.elm.getElementsByClassName(valueName.name)[0]
       if (elm) {
         elm.setAttribute(valueName.attr, value)
       }
     } else {
-      elm = list.utils.getByClass(item.elm, valueName, true)
+      elm = item.elm.getElementsByClassName(valueName)[0]
       if (elm) {
         elm.innerHTML = value
       }
@@ -136,10 +136,10 @@ var Templater = function (list) {
           values[valueName.data[j]] = list.utils.getAttribute(item.elm, 'data-' + valueName.data[j])
         }
       } else if (valueName.attr && valueName.name) {
-        elm = list.utils.getByClass(item.elm, valueName.name, true)
+        elm = item.elm.getElementsByClassName(valueName.name)[0]
         values[valueName.name] = elm ? list.utils.getAttribute(elm, valueName.attr) : ''
       } else {
-        elm = list.utils.getByClass(item.elm, valueName, true)
+        elm = item.elm.getElementsByClassName(valueName)[0]
         values[valueName] = elm ? elm.innerHTML : ''
       }
     }
