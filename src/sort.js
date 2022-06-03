@@ -1,3 +1,5 @@
+const toString = require("./utils/to-string")
+
 module.exports = function (list) {
   var buttons = {
     els: undefined,
@@ -77,12 +79,11 @@ module.exports = function (list) {
       }
     } else {
       sortFunction = function (itemA, itemB) {
-        var sort = list.utils.naturalSort
-        sort.alphabet = list.alphabet || options.alphabet || undefined
-        if (!sort.alphabet && options.insensitive) {
-          sort = list.utils.naturalSort.caseInsensitive
-        }
-        return sort(itemA.values()[options.valueName], itemB.values()[options.valueName]) * multi
+        const sortOptions = {}
+        sortOptions.alphabet = list.alphabet || options.alphabet || undefined
+        sortOptions.caseInsensitive = !sortOptions.alphabet && options.insensitive
+
+        return list.utils.naturalSort(toString(itemA.values()[options.valueName]), toString(itemB.values()[options.valueName]), sortOptions) * multi
       }
     }
 

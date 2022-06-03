@@ -1,14 +1,8 @@
-var List;List =
+var List;
 /******/ (function() { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
 
-/***/ "./src/add-async.js":
-/*!**************************!*\
-  !*** ./src/add-async.js ***!
-  \**************************/
-/*! unknown exports (runtime-defined) */
-/*! runtime requirements: module */
-/*! CommonJS bailout: module.exports is used directly at 1:0-14 */
+/***/ 302:
 /***/ (function(module) {
 
 module.exports = function (list) {
@@ -32,13 +26,7 @@ module.exports = function (list) {
 
 /***/ }),
 
-/***/ "./src/filter.js":
-/*!***********************!*\
-  !*** ./src/filter.js ***!
-  \***********************/
-/*! unknown exports (runtime-defined) */
-/*! runtime requirements: module */
-/*! CommonJS bailout: module.exports is used directly at 1:0-14 */
+/***/ 448:
 /***/ (function(module) {
 
 module.exports = function (list) {
@@ -76,21 +64,15 @@ module.exports = function (list) {
 
 /***/ }),
 
-/***/ "./src/fuzzy-search.js":
-/*!*****************************!*\
-  !*** ./src/fuzzy-search.js ***!
-  \*****************************/
-/*! unknown exports (runtime-defined) */
-/*! runtime requirements: module, __webpack_require__ */
-/*! CommonJS bailout: module.exports is used directly at 8:0-14 */
+/***/ 277:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-var classes = __webpack_require__(/*! ./utils/classes */ "./src/utils/classes.js"),
-    events = __webpack_require__(/*! ./utils/events */ "./src/utils/events.js"),
-    extend = __webpack_require__(/*! ./utils/extend */ "./src/utils/extend.js"),
-    toString = __webpack_require__(/*! ./utils/to-string */ "./src/utils/to-string.js"),
-    getByClass = __webpack_require__(/*! ./utils/get-by-class */ "./src/utils/get-by-class.js"),
-    fuzzy = __webpack_require__(/*! ./utils/fuzzy */ "./src/utils/fuzzy.js");
+var classes = __webpack_require__(700),
+    events = __webpack_require__(95),
+    extend = __webpack_require__(114),
+    toString = __webpack_require__(757),
+    getByClass = __webpack_require__(153),
+    fuzzy = __webpack_require__(180);
 
 module.exports = function (list, options) {
   options = options || {};
@@ -153,31 +135,25 @@ module.exports = function (list, options) {
 
 /***/ }),
 
-/***/ "./src/index.js":
-/*!**********************!*\
-  !*** ./src/index.js ***!
-  \**********************/
-/*! unknown exports (runtime-defined) */
-/*! runtime requirements: module, __webpack_require__ */
-/*! CommonJS bailout: module.exports is used directly at 11:0-14 */
+/***/ 352:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-var naturalSort = __webpack_require__(/*! string-natural-compare */ "./node_modules/string-natural-compare/natural-compare.js"),
-    getByClass = __webpack_require__(/*! ./utils/get-by-class */ "./src/utils/get-by-class.js"),
-    extend = __webpack_require__(/*! ./utils/extend */ "./src/utils/extend.js"),
-    indexOf = __webpack_require__(/*! ./utils/index-of */ "./src/utils/index-of.js"),
-    events = __webpack_require__(/*! ./utils/events */ "./src/utils/events.js"),
-    toString = __webpack_require__(/*! ./utils/to-string */ "./src/utils/to-string.js"),
-    classes = __webpack_require__(/*! ./utils/classes */ "./src/utils/classes.js"),
-    getAttribute = __webpack_require__(/*! ./utils/get-attribute */ "./src/utils/get-attribute.js"),
-    toArray = __webpack_require__(/*! ./utils/to-array */ "./src/utils/to-array.js");
+var naturalSort = __webpack_require__(915),
+    getByClass = __webpack_require__(153),
+    extend = __webpack_require__(114),
+    indexOf = __webpack_require__(557),
+    events = __webpack_require__(95),
+    toString = __webpack_require__(757),
+    classes = __webpack_require__(700),
+    getAttribute = __webpack_require__(826),
+    toArray = __webpack_require__(117);
 
 module.exports = function (id, options, values) {
   var self = this,
       init,
-      Item = __webpack_require__(/*! ./item */ "./src/item.js")(self),
-      addAsync = __webpack_require__(/*! ./add-async */ "./src/add-async.js")(self),
-      initPagination = __webpack_require__(/*! ./pagination */ "./src/pagination.js")(self);
+      Item = __webpack_require__(423)(self),
+      addAsync = __webpack_require__(302)(self),
+      initPagination = __webpack_require__(664)(self);
 
   init = {
     start: function start() {
@@ -216,12 +192,12 @@ module.exports = function (id, options, values) {
       }
 
       self.list = getByClass(self.listContainer, self.listClass, true);
-      self.parse = __webpack_require__(/*! ./parse */ "./src/parse.js")(self);
-      self.templater = __webpack_require__(/*! ./templater */ "./src/templater.js")(self);
-      self.search = __webpack_require__(/*! ./search */ "./src/search.js")(self);
-      self.filter = __webpack_require__(/*! ./filter */ "./src/filter.js")(self);
-      self.sort = __webpack_require__(/*! ./sort */ "./src/sort.js")(self);
-      self.fuzzySearch = __webpack_require__(/*! ./fuzzy-search */ "./src/fuzzy-search.js")(self, options.fuzzySearch);
+      self.parse = __webpack_require__(805)(self);
+      self.templater = __webpack_require__(561)(self);
+      self.search = __webpack_require__(821)(self);
+      self.filter = __webpack_require__(448)(self);
+      self.sort = __webpack_require__(745)(self);
+      self.fuzzySearch = __webpack_require__(277)(self, options.fuzzySearch);
       this.handlers();
       this.items();
       this.pagination();
@@ -456,13 +432,7 @@ module.exports = function (id, options, values) {
 
 /***/ }),
 
-/***/ "./src/item.js":
-/*!*********************!*\
-  !*** ./src/item.js ***!
-  \*********************/
-/*! unknown exports (runtime-defined) */
-/*! runtime requirements: module */
-/*! CommonJS bailout: module.exports is used directly at 1:0-14 */
+/***/ 423:
 /***/ (function(module) {
 
 module.exports = function (list) {
@@ -523,18 +493,12 @@ module.exports = function (list) {
 
 /***/ }),
 
-/***/ "./src/pagination.js":
-/*!***************************!*\
-  !*** ./src/pagination.js ***!
-  \***************************/
-/*! unknown exports (runtime-defined) */
-/*! runtime requirements: module, __webpack_require__ */
-/*! CommonJS bailout: module.exports is used directly at 5:0-14 */
+/***/ 664:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-var classes = __webpack_require__(/*! ./utils/classes */ "./src/utils/classes.js"),
-    events = __webpack_require__(/*! ./utils/events */ "./src/utils/events.js"),
-    List = __webpack_require__(/*! ./index */ "./src/index.js");
+var classes = __webpack_require__(700),
+    events = __webpack_require__(95),
+    List = __webpack_require__(352);
 
 module.exports = function (list) {
   var isHidden = false;
@@ -638,17 +602,11 @@ module.exports = function (list) {
 
 /***/ }),
 
-/***/ "./src/parse.js":
-/*!**********************!*\
-  !*** ./src/parse.js ***!
-  \**********************/
-/*! unknown exports (runtime-defined) */
-/*! runtime requirements: module, __webpack_require__ */
-/*! CommonJS bailout: module.exports is used directly at 1:0-14 */
+/***/ 805:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
 module.exports = function (list) {
-  var Item = __webpack_require__(/*! ./item */ "./src/item.js")(list);
+  var Item = __webpack_require__(423)(list);
 
   var getChildren = function getChildren(parent) {
     var nodes = parent.childNodes,
@@ -700,13 +658,7 @@ module.exports = function (list) {
 
 /***/ }),
 
-/***/ "./src/search.js":
-/*!***********************!*\
-  !*** ./src/search.js ***!
-  \***********************/
-/*! unknown exports (runtime-defined) */
-/*! runtime requirements: module */
-/*! CommonJS bailout: module.exports is used directly at 1:0-14 */
+/***/ 821:
 /***/ (function(module) {
 
 module.exports = function (_list) {
@@ -866,13 +818,7 @@ module.exports = function (_list) {
 
 /***/ }),
 
-/***/ "./src/sort.js":
-/*!*********************!*\
-  !*** ./src/sort.js ***!
-  \*********************/
-/*! unknown exports (runtime-defined) */
-/*! runtime requirements: module */
-/*! CommonJS bailout: module.exports is used directly at 1:0-14 */
+/***/ 745:
 /***/ (function(module) {
 
 module.exports = function (list) {
@@ -985,13 +931,7 @@ module.exports = function (list) {
 
 /***/ }),
 
-/***/ "./src/templater.js":
-/*!**************************!*\
-  !*** ./src/templater.js ***!
-  \**************************/
-/*! unknown exports (runtime-defined) */
-/*! runtime requirements: module */
-/*! CommonJS bailout: module.exports is used directly at 216:0-14 */
+/***/ 561:
 /***/ (function(module) {
 
 var Templater = function Templater(list) {
@@ -1215,19 +1155,13 @@ module.exports = function (list) {
 
 /***/ }),
 
-/***/ "./src/utils/classes.js":
-/*!******************************!*\
-  !*** ./src/utils/classes.js ***!
-  \******************************/
-/*! unknown exports (runtime-defined) */
-/*! runtime requirements: module, __webpack_require__ */
-/*! CommonJS bailout: module.exports is used directly at 24:0-14 */
+/***/ 700:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
 /**
  * Module dependencies.
  */
-var index = __webpack_require__(/*! ./index-of */ "./src/utils/index-of.js");
+var index = __webpack_require__(557);
 /**
  * Whitespace regexp.
  */
@@ -1388,22 +1322,13 @@ ClassList.prototype.has = ClassList.prototype.contains = function (name) {
 
 /***/ }),
 
-/***/ "./src/utils/events.js":
-/*!*****************************!*\
-  !*** ./src/utils/events.js ***!
-  \*****************************/
-/*! default exports */
-/*! export bind [provided] [no usage info] [missing usage info prevents renaming] */
-/*! export debounce [provided] [no usage info] [missing usage info prevents renaming] */
-/*! export unbind [provided] [no usage info] [missing usage info prevents renaming] */
-/*! other exports [not provided] [no usage info] */
-/*! runtime requirements: __webpack_exports__, __webpack_require__ */
+/***/ 95:
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
 var bind = window.addEventListener ? 'addEventListener' : 'attachEvent',
     unbind = window.removeEventListener ? 'removeEventListener' : 'detachEvent',
     prefix = bind !== 'addEventListener' ? 'on' : '',
-    toArray = __webpack_require__(/*! ./to-array */ "./src/utils/to-array.js");
+    toArray = __webpack_require__(117);
 /**
  * Bind `el` event `type` to `fn`.
  *
@@ -1473,13 +1398,7 @@ exports.debounce = function (fn, wait, immediate) {
 
 /***/ }),
 
-/***/ "./src/utils/extend.js":
-/*!*****************************!*\
-  !*** ./src/utils/extend.js ***!
-  \*****************************/
-/*! unknown exports (runtime-defined) */
-/*! runtime requirements: module */
-/*! CommonJS bailout: module.exports is used directly at 4:0-14 */
+/***/ 114:
 /***/ (function(module) {
 
 /*
@@ -1502,13 +1421,7 @@ module.exports = function extend(object) {
 
 /***/ }),
 
-/***/ "./src/utils/fuzzy.js":
-/*!****************************!*\
-  !*** ./src/utils/fuzzy.js ***!
-  \****************************/
-/*! unknown exports (runtime-defined) */
-/*! runtime requirements: module */
-/*! CommonJS bailout: module.exports is used directly at 1:0-14 */
+/***/ 180:
 /***/ (function(module) {
 
 module.exports = function (text, pattern, options) {
@@ -1644,13 +1557,7 @@ module.exports = function (text, pattern, options) {
 
 /***/ }),
 
-/***/ "./src/utils/get-attribute.js":
-/*!************************************!*\
-  !*** ./src/utils/get-attribute.js ***!
-  \************************************/
-/*! unknown exports (runtime-defined) */
-/*! runtime requirements: module */
-/*! CommonJS bailout: module.exports is used directly at 11:0-14 */
+/***/ 826:
 /***/ (function(module) {
 
 /**
@@ -1684,13 +1591,7 @@ module.exports = function (el, attr) {
 
 /***/ }),
 
-/***/ "./src/utils/get-by-class.js":
-/*!***********************************!*\
-  !*** ./src/utils/get-by-class.js ***!
-  \***********************************/
-/*! unknown exports (runtime-defined) */
-/*! runtime requirements: module */
-/*! CommonJS bailout: module.exports is used directly at 53:0-14 */
+/***/ 153:
 /***/ (function(module) {
 
 /**
@@ -1761,13 +1662,7 @@ module.exports = function () {
 
 /***/ }),
 
-/***/ "./src/utils/index-of.js":
-/*!*******************************!*\
-  !*** ./src/utils/index-of.js ***!
-  \*******************************/
-/*! unknown exports (runtime-defined) */
-/*! runtime requirements: module */
-/*! CommonJS bailout: module.exports is used directly at 3:0-14 */
+/***/ 557:
 /***/ (function(module) {
 
 var indexOf = [].indexOf;
@@ -1784,13 +1679,7 @@ module.exports = function (arr, obj) {
 
 /***/ }),
 
-/***/ "./src/utils/to-array.js":
-/*!*******************************!*\
-  !*** ./src/utils/to-array.js ***!
-  \*******************************/
-/*! unknown exports (runtime-defined) */
-/*! runtime requirements: module */
-/*! CommonJS bailout: module.exports is used directly at 11:0-14 */
+/***/ 117:
 /***/ (function(module) {
 
 /**
@@ -1829,13 +1718,7 @@ function isArray(arr) {
 
 /***/ }),
 
-/***/ "./src/utils/to-string.js":
-/*!********************************!*\
-  !*** ./src/utils/to-string.js ***!
-  \********************************/
-/*! unknown exports (runtime-defined) */
-/*! runtime requirements: module */
-/*! CommonJS bailout: module.exports is used directly at 1:0-14 */
+/***/ 757:
 /***/ (function(module) {
 
 module.exports = function (s) {
@@ -1847,53 +1730,69 @@ module.exports = function (s) {
 
 /***/ }),
 
-/***/ "./node_modules/string-natural-compare/natural-compare.js":
-/*!****************************************************************!*\
-  !*** ./node_modules/string-natural-compare/natural-compare.js ***!
-  \****************************************************************/
-/*! unknown exports (runtime-defined) */
-/*! runtime requirements: module */
-/*! CommonJS bailout: module.exports is used directly at 124:0-14 */
+/***/ 915:
 /***/ (function(module) {
 
 "use strict";
 
 
-var alphabet;
-var alphabetIndexMap;
-var alphabetIndexMapLength = 0;
+const defaultAlphabetIndexMap = [];
 
 function isNumberCode(code) {
-  return code >= 48 && code <= 57;
+  return code >= 48/* '0' */ && code <= 57/* '9' */;
 }
 
-function naturalCompare(a, b) {
-  var lengthA = (a += '').length;
-  var lengthB = (b += '').length;
-  var aIndex = 0;
-  var bIndex = 0;
+function naturalCompare(a, b, opts) {
+  if (typeof a !== 'string') {
+    throw new TypeError(`The first argument must be a string. Received type '${typeof a}'`);
+  }
+  if (typeof b !== 'string') {
+    throw new TypeError(`The second argument must be a string. Received type '${typeof b}'`);
+  }
 
-  while (aIndex < lengthA && bIndex < lengthB) {
-    var charCodeA = a.charCodeAt(aIndex);
-    var charCodeB = b.charCodeAt(bIndex);
+  const lengthA = a.length;
+  const lengthB = b.length;
+  let indexA = 0;
+  let indexB = 0;
+  let alphabetIndexMap = defaultAlphabetIndexMap;
+  let firstDifferenceInLeadingZeros = 0;
+
+  if (opts) {
+    if (opts.caseInsensitive) {
+      a = a.toLowerCase();
+      b = b.toLowerCase();
+    }
+
+    if (opts.alphabet) {
+      alphabetIndexMap = buildAlphabetIndexMap(opts.alphabet);
+    }
+  }
+
+  while (indexA < lengthA && indexB < lengthB) {
+    let charCodeA = a.charCodeAt(indexA);
+    let charCodeB = b.charCodeAt(indexB);
 
     if (isNumberCode(charCodeA)) {
       if (!isNumberCode(charCodeB)) {
         return charCodeA - charCodeB;
       }
 
-      var numStartA = aIndex;
-      var numStartB = bIndex;
+      let numStartA = indexA;
+      let numStartB = indexB;
 
-      while (charCodeA === 48 && ++numStartA < lengthA) {
+      while (charCodeA === 48/* '0' */ && ++numStartA < lengthA) {
         charCodeA = a.charCodeAt(numStartA);
       }
-      while (charCodeB === 48 && ++numStartB < lengthB) {
+      while (charCodeB === 48/* '0' */ && ++numStartB < lengthB) {
         charCodeB = b.charCodeAt(numStartB);
       }
 
-      var numEndA = numStartA;
-      var numEndB = numStartB;
+      if (numStartA !== numStartB && firstDifferenceInLeadingZeros === 0) {
+        firstDifferenceInLeadingZeros = numStartA - numStartB;
+      }
+
+      let numEndA = numStartA;
+      let numEndB = numStartB;
 
       while (numEndA < lengthA && isNumberCode(a.charCodeAt(numEndA))) {
         ++numEndA;
@@ -1902,27 +1801,27 @@ function naturalCompare(a, b) {
         ++numEndB;
       }
 
-      var difference = numEndA - numStartA - numEndB + numStartB; // numA length - numB length
-      if (difference) {
+      let difference = numEndA - numStartA - numEndB + numStartB; // numA length - numB length
+      if (difference !== 0) {
         return difference;
       }
 
       while (numStartA < numEndA) {
         difference = a.charCodeAt(numStartA++) - b.charCodeAt(numStartB++);
-        if (difference) {
+        if (difference !== 0) {
           return difference;
         }
       }
 
-      aIndex = numEndA;
-      bIndex = numEndB;
+      indexA = numEndA;
+      indexB = numEndB;
       continue;
     }
 
     if (charCodeA !== charCodeB) {
       if (
-        charCodeA < alphabetIndexMapLength &&
-        charCodeB < alphabetIndexMapLength &&
+        charCodeA < alphabetIndexMap.length &&
+        charCodeB < alphabetIndexMap.length &&
         alphabetIndexMap[charCodeA] !== -1 &&
         alphabetIndexMap[charCodeB] !== -1
       ) {
@@ -1932,53 +1831,46 @@ function naturalCompare(a, b) {
       return charCodeA - charCodeB;
     }
 
-    ++aIndex;
-    ++bIndex;
+    ++indexA;
+    ++indexB;
   }
 
-  if (aIndex >= lengthA && bIndex < lengthB && lengthA >= lengthB) {
-    return -1;
-  }
-
-  if (bIndex >= lengthB && aIndex < lengthA && lengthB >= lengthA) {
+  if (indexA < lengthA) { // `b` is a substring of `a`
     return 1;
   }
 
-  return lengthA - lengthB;
+  if (indexB < lengthB) { // `a` is a substring of `b`
+    return -1;
+  }
+
+  return firstDifferenceInLeadingZeros;
 }
 
-naturalCompare.caseInsensitive = naturalCompare.i = function(a, b) {
-  return naturalCompare(('' + a).toLowerCase(), ('' + b).toLowerCase());
-};
+const alphabetIndexMapCache = {};
 
-Object.defineProperties(naturalCompare, {
-  alphabet: {
-    get: function() {
-      return alphabet;
-    },
+function buildAlphabetIndexMap(alphabet) {
+  const existingMap = alphabetIndexMapCache[alphabet];
+  if (existingMap !== undefined) {
+    return existingMap;
+  }
 
-    set: function(value) {
-      alphabet = value;
-      alphabetIndexMap = [];
+  const indexMap = [];
+  const maxCharCode = alphabet.split('').reduce((maxCode, char) => {
+    return Math.max(maxCode, char.charCodeAt(0));
+  }, 0);
 
-      var i = 0;
+  for (let i = 0; i <= maxCharCode; i++) {
+    indexMap.push(-1);
+  }
 
-      if (alphabet) {
-        for (; i < alphabet.length; i++) {
-          alphabetIndexMap[alphabet.charCodeAt(i)] = i;
-        }
-      }
+  for (let i = 0; i < alphabet.length; i++) {
+    indexMap[alphabet.charCodeAt(i)] = i;
+  }
 
-      alphabetIndexMapLength = alphabetIndexMap.length;
+  alphabetIndexMapCache[alphabet] = indexMap;
 
-      for (i = 0; i < alphabetIndexMapLength; i++) {
-        if (alphabetIndexMap[i] === undefined) {
-          alphabetIndexMap[i] = -1;
-        }
-      }
-    },
-  },
-});
+  return indexMap;
+}
 
 module.exports = naturalCompare;
 
@@ -1993,8 +1885,9 @@ module.exports = naturalCompare;
 /******/ 	// The require function
 /******/ 	function __webpack_require__(moduleId) {
 /******/ 		// Check if module is in cache
-/******/ 		if(__webpack_module_cache__[moduleId]) {
-/******/ 			return __webpack_module_cache__[moduleId].exports;
+/******/ 		var cachedModule = __webpack_module_cache__[moduleId];
+/******/ 		if (cachedModule !== undefined) {
+/******/ 			return cachedModule.exports;
 /******/ 		}
 /******/ 		// Create a new module (and put it into the cache)
 /******/ 		var module = __webpack_module_cache__[moduleId] = {
@@ -2011,10 +1904,13 @@ module.exports = naturalCompare;
 /******/ 	}
 /******/ 	
 /************************************************************************/
-/******/ 	// module exports must be returned from runtime so entry inlining is disabled
+/******/ 	
 /******/ 	// startup
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__("./src/index.js");
+/******/ 	// This entry module is referenced by other modules so it can't be inlined
+/******/ 	var __webpack_exports__ = __webpack_require__(352);
+/******/ 	List = __webpack_exports__;
+/******/ 	
 /******/ })()
 ;
 //# sourceMappingURL=list.js.map

@@ -64,6 +64,6 @@
       "src/*.js",
       "src/utils/*.js"
     ],
-    "testURL": "http://localhost/"
+    "testEnvironment": "jsdom"
   }
 }
