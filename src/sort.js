@@ -1,21 +1,21 @@
-const toString = require("./utils/to-string")
+const toString = require('./utils/to-string')
 
 module.exports = function (list) {
   var buttons = {
     els: undefined,
     clear: function () {
       for (var i = 0, il = buttons.els.length; i < il; i++) {
-        list.utils.classes(buttons.els[i]).remove('asc')
-        list.utils.classes(buttons.els[i]).remove('desc')
+        buttons.els[i].classList.remove('asc')
+        buttons.els[i].classList.remove('desc')
       }
     },
     getOrder: function (btn) {
       var predefinedOrder = btn.getAttribute('data-order')
       if (predefinedOrder == 'asc' || predefinedOrder == 'desc') {
         return predefinedOrder
-      } else if (list.utils.classes(btn).has('desc')) {
+      } else if (btn.classList.contains('desc')) {
         return 'asc'
-      } else if (list.utils.classes(btn).has('asc')) {
+      } else if (btn.classList.contains('asc')) {
         return 'desc'
       } else {
         return 'asc'
@@ -38,10 +38,10 @@ module.exports = function (list) {
         var predefinedOrder = btn.getAttribute('data-order')
         if (predefinedOrder == 'asc' || predefinedOrder == 'desc') {
           if (predefinedOrder == options.order) {
-            list.utils.classes(btn).add(options.order)
+            btn.classList.add(options.order)
           }
         } else {
-          list.utils.classes(btn).add(options.order)
+          btn.classList.add(options.order)
         }
       }
     },
@@ -83,7 +83,13 @@ module.exports = function (list) {
         sortOptions.alphabet = list.alphabet || options.alphabet || undefined
         sortOptions.caseInsensitive = !sortOptions.alphabet && options.insensitive
 
-        return list.utils.naturalSort(toString(itemA.values()[options.valueName]), toString(itemB.values()[options.valueName]), sortOptions) * multi
+        return (
+          list.utils.naturalSort(
+            toString(itemA.values()[options.valueName]),
+            toString(itemB.values()[options.valueName]),
+            sortOptions
+          ) * multi
+        )
       }
     }
 

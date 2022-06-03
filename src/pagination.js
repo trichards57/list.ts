@@ -1,5 +1,4 @@
-var classes = require('./utils/classes'),
-  events = require('./utils/events'),
+var events = require('./utils/events'),
   List = require('./index')
 
 module.exports = function (list) {
@@ -37,7 +36,7 @@ module.exports = function (list) {
           dotted: false,
         })[0]
         if (className) {
-          classes(item.elm).add(className)
+          item.elm.classList.add(className)
         }
         item.elm.firstChild.setAttribute('data-i', i)
         item.elm.firstChild.setAttribute('data-page', page)
@@ -46,7 +45,7 @@ module.exports = function (list) {
           page: '...',
           dotted: true,
         })[0]
-        classes(item.elm).add('disabled')
+        item.elm.classList.add('disabled')
       }
     }
   }

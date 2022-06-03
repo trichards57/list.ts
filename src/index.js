@@ -1,7 +1,6 @@
 var naturalSort = require('string-natural-compare'),
   events = require('./utils/events'),
   toString = require('./utils/to-string'),
-  classes = require('./utils/classes'),
   toArray = require('./utils/to-array')
 
 module.exports = function (id, options, values) {
@@ -31,7 +30,6 @@ module.exports = function (id, options, values) {
         events: events,
         toString: toString,
         naturalSort: naturalSort,
-        classes: classes,
         toArray: toArray,
       }
 
