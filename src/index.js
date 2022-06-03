@@ -1,6 +1,5 @@
 var naturalSort = require('string-natural-compare'),
   extend = require('./utils/extend'),
-  indexOf = require('./utils/index-of'),
   events = require('./utils/events'),
   toString = require('./utils/to-string'),
   classes = require('./utils/classes'),
@@ -31,7 +30,6 @@ module.exports = function (id, options, values) {
       self.valueNames = []
       self.utils = {
         extend: extend,
-        indexOf: indexOf,
         events: events,
         toString: toString,
         naturalSort: naturalSort,

@@ -1,10 +1,4 @@
 /**
- * Module dependencies.
- */
-
-var index = require('./index-of')
-
-/**
  * Whitespace regexp.
  */
 
