@@ -1,9 +1,15 @@
 const fixture = require("./fixtures");
 
-describe("Show", function () {
-  var list, a, b, c, d, e, f;
+describe("Show", () => {
+  let list;
+  let a;
+  let b;
+  let c;
+  let d;
+  let e;
+  let f;
 
-  beforeAll(function () {
+  beforeAll(() => {
     list = fixture.list(
       ["id", "id2"],
       [
@@ -15,25 +21,25 @@ describe("Show", function () {
         { id: "6", id2: "bc" },
       ]
     );
-    a = list.get("id", "1")[0];
-    b = list.get("id", "2")[0];
-    c = list.get("id", "3")[0];
-    d = list.get("id", "4")[0];
-    e = list.get("id", "5")[0];
-    f = list.get("id", "6")[0];
+    [a] = list.get("id", "1");
+    [b] = list.get("id", "2");
+    [c] = list.get("id", "3");
+    [d] = list.get("id", "4");
+    [e] = list.get("id", "5");
+    [f] = list.get("id", "6");
   });
 
-  afterAll(function () {
+  afterAll(() => {
     fixture.removeList();
   });
 
-  afterEach(function () {
+  afterEach(() => {
     list.filter();
     list.show(1, 200);
   });
 
-  describe("Basics", function () {
-    it("should be 1, 2", function () {
+  describe("Basics", () => {
+    it("should be 1, 2", () => {
       list.show(1, 2);
       expect(list.visibleItems.length).toEqual(2);
       expect(list.itemVisible(a)).toBe(true);
@@ -43,7 +49,7 @@ describe("Show", function () {
       expect(list.itemVisible(e)).toBe(false);
       expect(list.itemVisible(f)).toBe(false);
     });
-    it("should show item 6", function () {
+    it("should show item 6", () => {
       list.show(6, 2);
       expect(list.visibleItems.length).toEqual(1);
       expect(list.itemVisible(a)).toBe(false);
@@ -53,7 +59,7 @@ describe("Show", function () {
       expect(list.itemVisible(e)).toBe(false);
       expect(list.itemVisible(f)).toBe(true);
     });
-    it("should show item 1, 2, 3, 4, 5, 6", function () {
+    it("should show item 1, 2, 3, 4, 5, 6", () => {
       list.show(1, 200);
       expect(list.visibleItems.length).toEqual(6);
       expect(list.itemVisible(a)).toBe(true);
@@ -63,7 +69,7 @@ describe("Show", function () {
       expect(list.itemVisible(e)).toBe(true);
       expect(list.itemVisible(f)).toBe(true);
     });
-    it("should show item 3, 4, 5", function () {
+    it("should show item 3, 4, 5", () => {
       list.show(3, 3);
       expect(list.visibleItems.length).toEqual(3);
       expect(list.itemVisible(a)).toBe(false);
@@ -73,7 +79,7 @@ describe("Show", function () {
       expect(list.itemVisible(e)).toBe(true);
       expect(list.itemVisible(f)).toBe(false);
     });
-    it("should show item 5, 6", function () {
+    it("should show item 5, 6", () => {
       list.show(5, 3);
       expect(list.visibleItems.length).toEqual(2);
       expect(list.itemVisible(a)).toBe(false);
@@ -85,11 +91,11 @@ describe("Show", function () {
     });
   });
 
-  describe("Search", function () {
-    afterEach(function () {
+  describe("Search", () => {
+    afterEach(() => {
       list.search();
     });
-    it("should show 3, 4", function () {
+    it("should show 3, 4", () => {
       list.search("b");
       list.show(1, 2);
       expect(list.visibleItems.length).toEqual(2);
@@ -100,7 +106,7 @@ describe("Show", function () {
       expect(list.itemVisible(e)).toBe(false);
       expect(list.itemVisible(f)).toBe(false);
     });
-    it("should show item 3,4,5,6", function () {
+    it("should show item 3,4,5,6", () => {
       list.search("b");
       list.show(1, 4);
       expect(list.visibleItems.length).toEqual(4);
@@ -111,7 +117,7 @@ describe("Show", function () {
       expect(list.itemVisible(e)).toBe(true);
       expect(list.itemVisible(f)).toBe(true);
     });
-    it("should not show any items but match two", function () {
+    it("should not show any items but match two", () => {
       list.search("a");
       list.show(3, 2);
       expect(list.visibleItems.length).toEqual(0);
@@ -125,14 +131,12 @@ describe("Show", function () {
     });
   });
 
-  describe("Filter", function () {
-    afterEach(function () {
+  describe("Filter", () => {
+    afterEach(() => {
       list.filter();
     });
-    it("should show 3, 4", function () {
-      list.filter(function (item) {
-        return item.values().id2 == "b";
-      });
+    it("should show 3, 4", () => {
+      list.filter((item) => item.values().id2 === "b");
       list.show(1, 2);
       expect(list.visibleItems.length).toEqual(2);
       expect(list.matchingItems.length).toEqual(2);
@@ -143,10 +147,8 @@ describe("Show", function () {
       expect(list.itemVisible(e)).toBe(false);
       expect(list.itemVisible(f)).toBe(false);
     });
-    it("should show item 3,4,5,6", function () {
-      list.filter(function (item) {
-        return item.values().id2 == "bc";
-      });
+    it("should show item 3,4,5,6", () => {
+      list.filter((item) => item.values().id2 === "bc");
       list.show(1, 4);
       expect(list.visibleItems.length).toEqual(2);
       expect(list.matchingItems.length).toEqual(2);
@@ -157,10 +159,8 @@ describe("Show", function () {
       expect(list.itemVisible(e)).toBe(true);
       expect(list.itemVisible(f)).toBe(true);
     });
-    it("should not show any items but match two", function () {
-      list.filter(function (item) {
-        return item.values().id2 == "b";
-      });
+    it("should not show any items but match two", () => {
+      list.filter((item) => item.values().id2 === "b");
       list.show(3, 2);
       expect(list.visibleItems.length).toEqual(0);
       expect(list.matchingItems.length).toEqual(2);
@@ -173,15 +173,13 @@ describe("Show", function () {
     });
   });
 
-  describe("Filter and search", function () {
-    afterEach(function () {
+  describe("Filter and search", () => {
+    afterEach(() => {
       list.filter();
     });
-    it("should show 4, 5", function () {
+    it("should show 4, 5", () => {
       list.show(1, 2);
-      list.filter(function (item) {
-        return item.values().id > "3";
-      });
+      list.filter((item) => item.values().id > "3");
       list.search("b");
       expect(list.visibleItems.length).toEqual(2);
       expect(list.matchingItems.length).toEqual(3);
@@ -192,11 +190,9 @@ describe("Show", function () {
       expect(list.itemVisible(e)).toBe(true);
       expect(list.itemVisible(f)).toBe(false);
     });
-    it("should show 5, 6", function () {
+    it("should show 5, 6", () => {
       list.show(1, 2);
-      list.filter(function (item) {
-        return item.values().id > "3";
-      });
+      list.filter((item) => item.values().id > "3");
       list.search("b");
       list.show(2, 2);
       expect(list.visibleItems.length).toEqual(2);

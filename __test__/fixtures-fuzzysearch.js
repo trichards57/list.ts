@@ -1,34 +1,34 @@
-const $ = require('jquery')
+const $ = require("jquery");
 
-var fixtureFuzzysearch = {
-  list: function (valueNames) {
-    var listHtml = $('<div id="list-fuzzy-search"><input class="fuzzy-search" /><ul class="list"></ul></div>'),
-      item = ''
+const fixtureFuzzysearch = {
+  list(valueNames) {
+    const listHtml = $('<div id="list-fuzzy-search"><input class="fuzzy-search" /><ul class="list"></ul></div>');
+    let item = "";
 
-    item = '<li>'
-    for (var i = 0; i < valueNames.length; i++) {
-      item += '<span class="' + valueNames[i] + '"</span>'
+    item = "<li>";
+    for (let i = 0; i < valueNames.length; i += 1) {
+      item += `<span class="${valueNames[i]}"</span>`;
     }
-    item += '</li>'
+    item += "</li>";
 
-    $(document.body).append(listHtml)
+    $(document.body).append(listHtml);
 
-    return item
+    return item;
   },
-  removeList: function () {
-    $('#list-fuzzy-search').remove()
+  removeList() {
+    $("#list-fuzzy-search").remove();
   },
-  i1: { name: 'Guybrush Threepwood' },
-  i2: { name: 'Manny Calavera' },
-  i3: { name: 'Bernard Bernoulli' },
-  i4: { name: 'LeChuck' },
-  i5: { name: 'Elaine Marley-Threepwood' },
-  i6: { name: 'Purple Tentacle' },
-  i7: { name: 'Adrian Ripburger' },
-  i8: { name: 'Bobbin Threadbare' },
-  i9: { name: 'Murray the Demonic Skull' },
-  i10: { name: 'Zak McKracken' },
-}
+  i1: { name: "Guybrush Threepwood" },
+  i2: { name: "Manny Calavera" },
+  i3: { name: "Bernard Bernoulli" },
+  i4: { name: "LeChuck" },
+  i5: { name: "Elaine Marley-Threepwood" },
+  i6: { name: "Purple Tentacle" },
+  i7: { name: "Adrian Ripburger" },
+  i8: { name: "Bobbin Threadbare" },
+  i9: { name: "Murray the Demonic Skull" },
+  i10: { name: "Zak McKracken" },
+};
 fixtureFuzzysearch.all = [
   fixtureFuzzysearch.i1,
   fixtureFuzzysearch.i2,
@@ -40,6 +40,6 @@ fixtureFuzzysearch.all = [
   fixtureFuzzysearch.i8,
   fixtureFuzzysearch.i9,
   fixtureFuzzysearch.i10,
-]
+];
 
-module.exports = fixtureFuzzysearch
+module.exports = fixtureFuzzysearch;

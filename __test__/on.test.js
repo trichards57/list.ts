@@ -1,124 +1,120 @@
-const fixture = require('./fixtures')
+const fixture = require("./fixtures");
 
-describe('On', function () {
-  var list
+describe("On", () => {
+  let list;
 
-  beforeEach(function () {
-    list = fixture.list(['name', 'born'], fixture.all)
-  })
+  beforeEach(() => {
+    list = fixture.list(["name", "born"], fixture.all);
+  });
 
-  afterEach(function () {
-    fixture.removeList()
-  })
+  afterEach(() => {
+    fixture.removeList();
+  });
 
-  describe('Updated', function () {
-    it('should be triggered after search', function (done) {
-      list.on('updated', function (list) {
-        done()
-      })
-      list.search('jonny')
-    })
-    it('should be triggered after sort', function (done) {
-      list.on('updated', function (list) {
-        done()
-      })
-      list.sort('name')
-    })
-    it('should be triggered after filter', function (done) {
-      list.on('updated', function (list) {
-        done()
-      })
-      list.filter(function () {
-        return true
-      })
-    })
-    it('should be triggered after show', function (done) {
-      list.on('updated', function (list) {
-        done()
-      })
-      list.show(1, 10)
-    })
+  describe("Updated", () => {
+    it("should be triggered after search", (done) => {
+      list.on("updated", () => {
+        done();
+      });
+      list.search("jonny");
+    });
+    it("should be triggered after sort", (done) => {
+      list.on("updated", () => {
+        done();
+      });
+      list.sort("name");
+    });
+    it("should be triggered after filter", (done) => {
+      list.on("updated", () => {
+        done();
+      });
+      list.filter(() => true);
+    });
+    it("should be triggered after show", (done) => {
+      list.on("updated", () => {
+        done();
+      });
+      list.show(1, 10);
+    });
 
-    it('should be triggered after add', function (done) {
-      list.on('updated', function (list) {
-        done()
-      })
-      list.add({ name: 'Hej' })
-    })
-    it('should be triggered after remove', function (done) {
-      list.on('updated', function (list) {
-        done()
-      })
-      list.remove('name', 'Jonny')
-    })
-  })
+    it("should be triggered after add", (done) => {
+      list.on("updated", () => {
+        done();
+      });
+      list.add({ name: "Hej" });
+    });
+    it("should be triggered after remove", (done) => {
+      list.on("updated", () => {
+        done();
+      });
+      list.remove("name", "Jonny");
+    });
+  });
 
-  describe('Multiple handlers', function () {
-    it('should be trigger both handlers', function (done) {
-      var done1 = false,
-        done2 = false,
-        isDone = function () {
-          if (done1 && done2) {
-            done()
-          }
+  describe("Multiple handlers", () => {
+    it("should be trigger both handlers", (done) => {
+      let done1 = false;
+      let done2 = false;
+      function isDone() {
+        if (done1 && done2) {
+          done();
         }
+      }
 
-      list.on('updated', function (list) {
-        done1 = true
-        isDone()
-      })
-      list.on('updated', function (list) {
-        done2 = true
-        isDone()
-      })
-      list.search('jonny')
-    })
-  })
+      list.on("updated", () => {
+        done1 = true;
+        isDone();
+      });
+      list.on("updated", () => {
+        done2 = true;
+        isDone();
+      });
+      list.search("jonny");
+    });
+  });
 
-  describe('Search', function () {
-    it('should be triggered before and after search', function (done) {
-      var done1 = false
-      list.on('searchStart', function (list) {
-        done1 = true
-      })
-      list.on('searchComplete', function (list) {
+  describe("Search", () => {
+    it("should be triggered before and after search", (done) => {
+      let done1 = false;
+      list.on("searchStart", () => {
+        done1 = true;
+      });
+      list.on("searchComplete", () => {
         if (done1) {
-          done()
+          done();
         }
-      })
-      list.search('jonny')
-    })
-  })
+      });
+      list.search("jonny");
+    });
+  });
 
-  describe('Sort', function () {
-    it('should be triggered before and after sort', function (done) {
-      var done1 = false
-      list.on('sortStart', function (list) {
-        done1 = true
-      })
-      list.on('sortComplete', function (list) {
+  describe("Sort", () => {
+    it("should be triggered before and after sort", (done) => {
+      let done1 = false;
+      list.on("sortStart", () => {
+        done1 = true;
+      });
+      list.on("sortComplete", () => {
         if (done1) {
-          done()
+          done();
         }
-      })
-      list.sort('name')
-    })
-  })
+      });
+      list.sort("name");
+    });
+  });
 
-  describe('Filter', function () {
-    it('should be triggered before and after filter', function (done) {
-      var done1 = false
-      list.on('filterStart', function (list) {
-        done1 = true
-      })
-      list.on('filterComplete', function (list) {
+  describe("Filter", () => {
+    it("should be triggered before and after filter", (done) => {
+      let done1 = false;
+      list.on("filterStart", () => {
+        done1 = true;
+      });
+      list.on("filterComplete", () => {
         if (done1) {
-          done()
+          done();
         }
-      })
-      list.filter(function () {
-        return true
-      })
-    })
-  })
-})
+      });
+      list.filter(() => true);
+    });
+  });
+});

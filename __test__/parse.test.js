@@ -1,12 +1,13 @@
-const $ = require('jquery'),
-  List = require('../src/index')
+const $ = require("jquery");
+const List = require("../src/index");
 
-describe('Parse', function () {
-  describe('Parse class', function () {
-    var list
-    beforeEach(function () {
-      $('body').append(
+describe("Parse", () => {
+  describe("Parse class", () => {
+    let list;
+    beforeEach(() => {
+      $("body").append(
         $(
+          // eslint-disable-next-line no-multi-str
           '<div id="parse-list">\
         <div class="list">\
           <div><span class="name">Jonny</span><span class="born">1986</span></div>\
@@ -14,50 +15,51 @@ describe('Parse', function () {
         </div>\
       </div>'
         )
-      )
+      );
 
-      list = new List('parse-list', {
-        valueNames: ['name', 'born'],
-      })
-    })
+      list = new List("parse-list", {
+        valueNames: ["name", "born"],
+      });
+    });
 
-    afterEach(function () {
-      $('#parse-list').remove()
-    })
+    afterEach(() => {
+      $("#parse-list").remove();
+    });
 
-    it('should have two items', function () {
-      expect(list.items.length).toEqual(2)
-      expect(list.items[0].values().name).toEqual('Jonny')
-      expect(list.items[1].values().name).toEqual('Jocke')
-    })
-    it('should add item to parsed list', function () {
-      list.add({ name: 'Sven', born: 1950 })
-      expect(list.items.length).toEqual(3)
-      expect(list.items[0].values().name).toEqual('Jonny')
-      expect(list.items[1].values().name).toEqual('Jocke')
-      expect(list.items[2].values().name).toEqual('Sven')
-      expect(list.items[0].values().born).toEqual('1986')
-      expect(list.items[2].values().born).toEqual(1950)
-      var el = $($('#parse-list').find('.list div')[2])
-      expect(el.find('span').length).toEqual(2)
-      expect(el.find('span.name').text()).toEqual('Sven')
-      expect(el.find('span.born').text()).toEqual('1950')
-    })
-    it('should parsed value always be string while added could be number', function () {
-      list.add({ name: 'Sven', born: 1950 })
-      expect(list.items[0].values().born).toEqual('1986')
-      expect(list.items[0].values().born).not.toEqual(1986)
-      expect(list.items[2].values().born).not.toEqual('1950')
-      expect(list.items[2].values().born).toEqual(1950)
-    })
-  })
+    it("should have two items", () => {
+      expect(list.items.length).toEqual(2);
+      expect(list.items[0].values().name).toEqual("Jonny");
+      expect(list.items[1].values().name).toEqual("Jocke");
+    });
+    it("should add item to parsed list", () => {
+      list.add({ name: "Sven", born: 1950 });
+      expect(list.items.length).toEqual(3);
+      expect(list.items[0].values().name).toEqual("Jonny");
+      expect(list.items[1].values().name).toEqual("Jocke");
+      expect(list.items[2].values().name).toEqual("Sven");
+      expect(list.items[0].values().born).toEqual("1986");
+      expect(list.items[2].values().born).toEqual(1950);
+      const el = $($("#parse-list").find(".list div")[2]);
+      expect(el.find("span").length).toEqual(2);
+      expect(el.find("span.name").text()).toEqual("Sven");
+      expect(el.find("span.born").text()).toEqual("1950");
+    });
+    it("should parsed value always be string while added could be number", () => {
+      list.add({ name: "Sven", born: 1950 });
+      expect(list.items[0].values().born).toEqual("1986");
+      expect(list.items[0].values().born).not.toEqual(1986);
+      expect(list.items[2].values().born).not.toEqual("1950");
+      expect(list.items[2].values().born).toEqual(1950);
+    });
+  });
 
-  describe('Parse data', function () {
-    var list
+  describe("Parse data", () => {
+    let list;
 
-    beforeEach(function () {
-      $('body').append(
+    beforeEach(() => {
+      $("body").append(
         $(
+          // eslint-disable-next-line no-multi-str
           '<div id="parse-list">\
         <div class="list">\
           <div data-id="1">\
@@ -75,62 +77,62 @@ describe('Parse', function () {
         </div>\
       </div>'
         )
-      )
+      );
 
-      list = new List('parse-list', {
+      list = new List("parse-list", {
         valueNames: [
-          'name',
-          'born',
-          { data: ['id'] },
-          { attr: 'src', name: 'image' },
-          { attr: 'href', name: 'link' },
-          { attr: 'value', name: 'foo' },
-          { attr: 'data-timestamp', name: 'timestamp' },
+          "name",
+          "born",
+          { data: ["id"] },
+          { attr: "src", name: "image" },
+          { attr: "href", name: "link" },
+          { attr: "value", name: "foo" },
+          { attr: "data-timestamp", name: "timestamp" },
         ],
-      })
-    })
+      });
+    });
 
-    afterEach(function () {
-      $('#parse-list').remove()
-    })
+    afterEach(() => {
+      $("#parse-list").remove();
+    });
 
-    it('should get values from class, data, src, value and child els data-attribute', function () {
-      expect(list.items.length).toEqual(2)
-      var jonny = list.items[0].values()
-      expect(jonny.name).toEqual('Jonny')
-      expect(jonny.born).toEqual('1986')
-      expect(jonny.id).toEqual('1')
-      expect(jonny.image).toEqual('usage/boba.jpeg')
-      expect(jonny.timestamp).toEqual('54321')
-      expect(jonny.foo).toEqual('Bar')
-    })
-    it('should add item to list with class, data and src', function () {
+    it("should get values from class, data, src, value and child els data-attribute", () => {
+      expect(list.items.length).toEqual(2);
+      const jonny = list.items[0].values();
+      expect(jonny.name).toEqual("Jonny");
+      expect(jonny.born).toEqual("1986");
+      expect(jonny.id).toEqual("1");
+      expect(jonny.image).toEqual("usage/boba.jpeg");
+      expect(jonny.timestamp).toEqual("54321");
+      expect(jonny.foo).toEqual("Bar");
+    });
+    it("should add item to list with class, data and src", () => {
       list.add({
-        name: 'Sven',
+        name: "Sven",
         born: 1950,
         id: 4,
-        image: 'usage/rey.jpeg',
-        link: 'localhost',
-        timestamp: '1337',
-        foo: 'hej',
-      })
-      expect(list.items.length).toEqual(3)
-      var sven = list.items[2].values()
-      expect(sven.name).toEqual('Sven')
-      expect(sven.born).toEqual(1950)
-      expect(sven.id).toEqual(4)
-      expect(sven.image).toEqual('usage/rey.jpeg')
-      expect(sven.link).toEqual('localhost')
-      expect(sven.timestamp).toEqual('1337')
-      expect(sven.foo).toEqual('hej')
-      var el = $($('#parse-list').find('.list div')[2])
-      expect(el.data('id')).toEqual(4)
-      expect(el.find('.name').text()).toEqual('Sven')
-      expect(el.find('.born').text()).toEqual('1950')
-      expect(el.find('.image').attr('src')).toEqual('usage/rey.jpeg')
-      expect(el.find('.link').attr('href')).toEqual('localhost')
-      expect(el.find('.timestamp').data('timestamp')).toEqual(1337)
-      expect(el.find('.foo').val()).toEqual('hej')
-    })
-  })
-})
+        image: "usage/rey.jpeg",
+        link: "localhost",
+        timestamp: "1337",
+        foo: "hej",
+      });
+      expect(list.items.length).toEqual(3);
+      const sven = list.items[2].values();
+      expect(sven.name).toEqual("Sven");
+      expect(sven.born).toEqual(1950);
+      expect(sven.id).toEqual(4);
+      expect(sven.image).toEqual("usage/rey.jpeg");
+      expect(sven.link).toEqual("localhost");
+      expect(sven.timestamp).toEqual("1337");
+      expect(sven.foo).toEqual("hej");
+      const el = $($("#parse-list").find(".list div")[2]);
+      expect(el.data("id")).toEqual(4);
+      expect(el.find(".name").text()).toEqual("Sven");
+      expect(el.find(".born").text()).toEqual("1950");
+      expect(el.find(".image").attr("src")).toEqual("usage/rey.jpeg");
+      expect(el.find(".link").attr("href")).toEqual("localhost");
+      expect(el.find(".timestamp").data("timestamp")).toEqual(1337);
+      expect(el.find(".foo").val()).toEqual("hej");
+    });
+  });
+});

@@ -1,34 +1,40 @@
 const fixture = require("./fixtures");
 
-describe("Search", function () {
-  var list, jonny, martina, angelica, sebastian, imma, hasse;
+describe("Search", () => {
+  let list;
+  let jonny;
+  let martina;
+  let angelica;
+  let sebastian;
+  let imma;
+  let hasse;
 
-  beforeEach(function () {
+  beforeEach(() => {
     list = fixture.list(["name", "born"], fixture.all);
 
-    jonny = list.get("name", "Jonny Strömberg")[0];
-    martina = list.get("name", "Martina Elm")[0];
-    angelica = list.get("name", "Angelica Abraham")[0];
-    sebastian = list.get("name", "Sebastian Höglund")[0];
-    imma = list.get("name", "Imma Grafström")[0];
-    hasse = list.get("name", "Hasse Strömberg")[0];
+    [jonny] = list.get("name", "Jonny Strömberg");
+    [martina] = list.get("name", "Martina Elm");
+    [angelica] = list.get("name", "Angelica Abraham");
+    [sebastian] = list.get("name", "Sebastian Höglund");
+    [imma] = list.get("name", "Imma Grafström");
+    [hasse] = list.get("name", "Hasse Strömberg");
   });
 
-  afterEach(function () {
+  afterEach(() => {
     fixture.removeList();
   });
 
-  describe("Case-sensitive", function () {
-    it("should not be case-sensitive", function () {
-      var result = list.search("jonny");
+  describe("Case-sensitive", () => {
+    it("should not be case-sensitive", () => {
+      const result = list.search("jonny");
       expect(result.length).toEqual(1);
       expect(result[0]).toEqual(jonny);
     });
   });
 
-  describe("Number of results", function () {
-    it("should find jonny, martina, angelice", function () {
-      var result = list.search("1986");
+  describe("Number of results", () => {
+    it("should find jonny, martina, angelice", () => {
+      const result = list.search("1986");
       expect(result.length).toEqual(3); // 3!!
       expect(list.itemMatches(jonny)).toBe(true);
       expect(list.itemMatches(martina)).toBe(true);
@@ -37,8 +43,8 @@ describe("Search", function () {
       expect(list.itemMatches(imma)).toBe(false);
       expect(list.itemMatches(hasse)).toBe(false);
     });
-    it("should find all with utf-8 char ö", function () {
-      var result = list.search("ö");
+    it("should find all with utf-8 char ö", () => {
+      const result = list.search("ö");
       expect(result.length).toEqual(4); // 4!!
       expect(list.itemMatches(jonny)).toBe(true);
       expect(list.itemMatches(martina)).toBe(false);
@@ -47,117 +53,117 @@ describe("Search", function () {
       expect(list.itemMatches(imma)).toBe(true);
       expect(list.itemMatches(hasse)).toBe(true);
     });
-    it("should not break with weird searches", function () {
-      expect(function () {
+    it("should not break with weird searches", () => {
+      expect(() => {
         list.search(undefined);
       }).not.toThrow();
-      expect(function () {
+      expect(() => {
         list.search(null);
       }).not.toThrow();
-      expect(function () {
+      expect(() => {
         list.search(0);
       }).not.toThrow();
-      expect(function () {
-        list.search(function () {});
+      expect(() => {
+        list.search(() => {});
       }).not.toThrow();
-      expect(function () {
+      expect(() => {
         list.search({ foo: "bar" });
       }).not.toThrow();
     });
-    it("should not break with weird values", function () {
+    it("should not break with weird values", () => {
       jonny.values({ name: undefined });
       martina.values({ name: null });
       angelica.values({ name: 0 });
-      sebastian.values({ name: function () {} });
+      sebastian.values({ name() {} });
       imma.values({ name: { foo: "bar" } });
 
-      expect(function () {
+      expect(() => {
         list.search("jonny");
       }).not.toThrow();
-      expect(function () {
+      expect(() => {
         list.search(undefined);
       }).not.toThrow();
-      expect(function () {
+      expect(() => {
         list.search(null);
       }).not.toThrow();
-      expect(function () {
+      expect(() => {
         list.search(0);
       }).not.toThrow();
-      expect(function () {
-        list.search(function () {});
+      expect(() => {
+        list.search(() => {});
       }).not.toThrow();
-      expect(function () {
+      expect(() => {
         list.search({ foo: "bar" });
       }).not.toThrow();
     });
   });
 
-  describe("Default search columns", function () {
-    it("should find in the default match column", function () {
+  describe("Default search columns", () => {
+    it("should find in the default match column", () => {
       list.searchColumns = ["name"];
-      var result = list.search("jonny");
+      const result = list.search("jonny");
       expect(result.length).toEqual(1);
       expect(result[0]).toEqual(jonny);
     });
-    it("should not find in the default match column", function () {
+    it("should not find in the default match column", () => {
       list.searchColumns = ["born"];
-      var result = list.search("jonny");
+      const result = list.search("jonny");
       expect(result.length).toEqual(0);
     });
   });
 
-  describe("Specific columns", function () {
-    it("should find match in column", function () {
-      var result = list.search("jonny", ["name"]);
+  describe("Specific columns", () => {
+    it("should find match in column", () => {
+      const result = list.search("jonny", ["name"]);
       expect(result.length).toEqual(1);
       expect(result[0]).toEqual(jonny);
     });
-    it("should not find match in column", function () {
-      var result = list.search("jonny", ["born"]);
+    it("should not find match in column", () => {
+      const result = list.search("jonny", ["born"]);
       expect(result.length).toEqual(0);
     });
-    it("should find match in column", function () {
-      var result = list.search("jonny", ["name"]);
+    it("should find match in column", () => {
+      const result = list.search("jonny", ["name"]);
       expect(result.length).toEqual(1);
       expect(result[0]).toEqual(jonny);
     });
-    it("should not find match in column", function () {
-      var result = list.search("jonny", ["born"]);
+    it("should not find match in column", () => {
+      const result = list.search("jonny", ["born"]);
       expect(result.length).toEqual(0);
     });
-    it("should work with columns that do not exist", function () {
-      var result = list.search("jonny", ["pet"]);
+    it("should work with columns that do not exist", () => {
+      const result = list.search("jonny", ["pet"]);
       expect(result.length).toEqual(0);
     });
-    it("should remove column option", function () {
-      var result = list.search("jonny", ["born"]);
+    it("should remove column option", () => {
+      let result = list.search("jonny", ["born"]);
       expect(result.length).toEqual(0);
       result = list.search("jonny");
       expect(result.length).toEqual(1);
     });
   });
 
-  describe("Custom search function", function () {
-    var customSearchFunction = function (searchString, columns) {
-      for (var k = 0, kl = list.items.length; k < kl; k++) {
+  describe("Custom search function", () => {
+    const customSearchFunction = () => {
+      for (let k = 0, kl = list.items.length; k < kl; k += 1) {
         if (list.items[k].values().born > 1985) {
           list.items[k].found = true;
         }
       }
     };
-    it("should use custom function in third argument", function () {
-      var result = list.search("jonny", ["name"], customSearchFunction);
+    it("should use custom function in third argument", () => {
+      const result = list.search("jonny", ["name"], customSearchFunction);
       expect(result.length).toEqual(4);
     });
-    it("should use custom function in second argument", function () {
-      var result = list.search("jonny", customSearchFunction);
+    it("should use custom function in second argument", () => {
+      const result = list.search("jonny", customSearchFunction);
       expect(result.length).toEqual(4);
     });
   });
 
-  describe("Multiple word search", function () {
-    it("should find jonny, hasse", function () {
-      var result = list.search("berg str");
+  describe("Multiple word search", () => {
+    it("should find jonny, hasse", () => {
+      const result = list.search("berg str");
       expect(result.length).toEqual(2);
       expect(list.itemMatches(jonny)).toBe(true);
       expect(list.itemMatches(martina)).toBe(false);
@@ -166,8 +172,8 @@ describe("Search", function () {
       expect(list.itemMatches(imma)).toBe(false);
       expect(list.itemMatches(hasse)).toBe(true);
     });
-    it("should find martina, angelica, sebastian, hasse", function () {
-      var result = list.search("a e");
+    it("should find martina, angelica, sebastian, hasse", () => {
+      const result = list.search("a e");
       expect(result.length).toEqual(4);
       expect(list.itemMatches(jonny)).toBe(false);
       expect(list.itemMatches(martina)).toBe(true);
@@ -176,21 +182,21 @@ describe("Search", function () {
       expect(list.itemMatches(imma)).toBe(false);
       expect(list.itemMatches(hasse)).toBe(true);
     });
-    it("stripping whitespace should find martina", function () {
-      var result = list.search("martina  elm ");
+    it("stripping whitespace should find martina", () => {
+      const result = list.search("martina  elm ");
       expect(result.length).toEqual(1);
       expect(result[0]).toEqual(martina);
     });
   });
 
-  describe("Quoted phrase searches", function () {
-    it("should find martina", function () {
-      var result = list.search('"a e"');
+  describe("Quoted phrase searches", () => {
+    it("should find martina", () => {
+      const result = list.search('"a e"');
       expect(result.length).toEqual(1);
       expect(result[0]).toEqual(martina);
     });
-    it("quoted phrase and multiple words should find jonny", function () {
-      var result = list.search('" str" 1986');
+    it("quoted phrase and multiple words should find jonny", () => {
+      const result = list.search('" str" 1986');
       expect(result.length).toEqual(1);
       expect(result[0]).toEqual(jonny);
     });

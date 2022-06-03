@@ -1,33 +1,37 @@
 const fixture = require("./fixtures");
 
-describe("Search and filter", function () {
-  var list, jonny, martina, angelica, sebastian, imma, hasse;
+describe("Search and filter", () => {
+  let list;
+  let jonny;
+  let martina;
+  let angelica;
+  let sebastian;
+  let imma;
+  let hasse;
 
-  beforeAll(function () {
+  beforeAll(() => {
     list = fixture.list(["name", "born"], fixture.all);
 
-    jonny = list.get("name", "Jonny Strömberg")[0];
-    martina = list.get("name", "Martina Elm")[0];
-    angelica = list.get("name", "Angelica Abraham")[0];
-    sebastian = list.get("name", "Sebastian Höglund")[0];
-    imma = list.get("name", "Imma Grafström")[0];
-    hasse = list.get("name", "Hasse Strömberg")[0];
+    [jonny] = list.get("name", "Jonny Strömberg");
+    [martina] = list.get("name", "Martina Elm");
+    [angelica] = list.get("name", "Angelica Abraham");
+    [sebastian] = list.get("name", "Sebastian Höglund");
+    [imma] = list.get("name", "Imma Grafström");
+    [hasse] = list.get("name", "Hasse Strömberg");
   });
 
-  afterAll(function () {
+  afterAll(() => {
     fixture.removeList();
   });
 
-  afterEach(function () {
+  afterEach(() => {
     list.search();
     list.filter();
   });
 
-  describe("Search with filter", function () {
-    it("should find everyone born 1986", function () {
-      list.filter(function (item) {
-        return item.values().born == "1986";
-      });
+  describe("Search with filter", () => {
+    it("should find everyone born 1986", () => {
+      list.filter((item) => item.values().born === "1986");
       expect(list.matchingItems.length).toEqual(3);
       expect(list.itemMatches(jonny)).toBe(true);
       expect(list.itemMatches(martina)).toBe(true);
@@ -36,10 +40,8 @@ describe("Search and filter", function () {
       expect(list.itemMatches(imma)).toBe(false);
       expect(list.itemMatches(hasse)).toBe(false);
     });
-    it('should find everyone born 1986 and containes "ö"', function () {
-      list.filter(function (item) {
-        return item.values().born == "1986";
-      });
+    it('should find everyone born 1986 and containes "ö"', () => {
+      list.filter((item) => item.values().born === "1986");
       list.search("ö");
       expect(list.matchingItems.length).toEqual(1);
       expect(list.itemMatches(jonny)).toBe(true);
@@ -49,10 +51,8 @@ describe("Search and filter", function () {
       expect(list.itemMatches(imma)).toBe(false);
       expect(list.itemMatches(hasse)).toBe(false);
     });
-    it('should find everyone with a "ö"', function () {
-      list.filter(function (item) {
-        return item.values().born == "1986";
-      });
+    it('should find everyone with a "ö"', () => {
+      list.filter((item) => item.values().born === "1986");
       list.search("ö");
       list.filter();
       expect(list.matchingItems.length).toEqual(4);

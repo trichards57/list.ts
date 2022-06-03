@@ -1,18 +1,18 @@
-const $ = require("jquery"),
-  fixture = require("./fixtures");
+const $ = require("jquery");
+const fixture = require("./fixtures");
 
-describe("Defaults", function () {
-  var list;
+describe("Defaults", () => {
+  let list;
 
-  beforeAll(function () {
+  beforeAll(() => {
     list = fixture.list(["name"], [{ name: "Jonny" }]);
   });
 
-  afterAll(function () {
+  afterAll(() => {
     fixture.removeList();
   });
 
-  it("should have all default attributes", function () {
+  it("should have all default attributes", () => {
     expect(list.items).toBeInstanceOf(Array);
     expect(list.visibleItems).toBeInstanceOf(Array);
     expect(list.matchingItems).toBeInstanceOf(Array);
@@ -34,12 +34,12 @@ describe("Defaults", function () {
     expect(list.searchClass).toEqual("search");
   });
 
-  it("should have the right elements", function () {
+  it("should have the right elements", () => {
     expect(list.list).toEqual($(".list")[0]);
     expect(list.listContainer).toEqual($("#list")[0]);
   });
 
-  it("should have all default methods", function () {
+  it("should have all default methods", () => {
     expect(list.add).toBeInstanceOf(Function);
     expect(list.remove).toBeInstanceOf(Function);
     expect(list.get).toBeInstanceOf(Function);

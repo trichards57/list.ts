@@ -1,11 +1,17 @@
-const $ = require("jquery"),
-  fixture = require("./fixtures");
+const $ = require("jquery");
 const naturalSort = require("string-natural-compare");
+const fixture = require("./fixtures");
 
-describe("Sort", function () {
-  var list, i1, i2, i3, i4, i5, i6;
+describe("Sort", () => {
+  let list;
+  let i1;
+  let i2;
+  let i3;
+  let i4;
+  let i5;
+  let i6;
 
-  beforeEach(function () {
+  beforeEach(() => {
     list = fixture.list(
       ["id"],
       [
@@ -17,20 +23,20 @@ describe("Sort", function () {
         { id: "6", val: "" },
       ]
     );
-    i1 = list.get("id", "1")[0];
-    i2 = list.get("id", "2")[0];
-    i3 = list.get("id", "3")[0];
-    i4 = list.get("id", "4")[0];
-    i5 = list.get("id", "5")[0];
-    i6 = list.get("id", "6")[0];
+    [i1] = list.get("id", "1");
+    [i2] = list.get("id", "2");
+    [i3] = list.get("id", "3");
+    [i4] = list.get("id", "4");
+    [i5] = list.get("id", "5");
+    [i6] = list.get("id", "6");
   });
 
-  afterEach(function () {
+  afterEach(() => {
     fixture.removeList();
   });
 
-  describe("Basics", function () {
-    it("should sort letters asc", function () {
+  describe("Basics", () => {
+    it("should sort letters asc", () => {
       i1.values({ val: "b" });
       i2.values({ val: "a" });
       i3.values({ val: "c" });
@@ -45,7 +51,7 @@ describe("Sort", function () {
       expect(list.items[4].values().val).toBe("y");
       expect(list.items[5].values().val).toBe("z");
     });
-    it("should sort letters desc", function () {
+    it("should sort letters desc", () => {
       i1.values({ val: "b" });
       i2.values({ val: "a" });
       i3.values({ val: "c" });
@@ -60,7 +66,7 @@ describe("Sort", function () {
       expect(list.items[4].values().val).toBe("b");
       expect(list.items[5].values().val).toBe("a");
     });
-    it("should sort åäö desc", function () {
+    it("should sort åäö desc", () => {
       list.alphabet = "ABCDEFGHIJKLMNOPQRSTUVXYZÅÄÖabcdefghijklmnopqrstuvxyzåäö";
       i1.values({ val: "a" });
       i2.values({ val: "å" });
@@ -76,7 +82,7 @@ describe("Sort", function () {
       expect(list.items[4].values().val).toBe("o");
       expect(list.items[5].values().val).toBe("a");
     });
-    it("should sort åäö asc", function () {
+    it("should sort åäö asc", () => {
       list.alphabet = "ABCDEFGHIJKLMNOPQRSTUVXYZÅÄÖabcdefghijklmnopqrstuvxyzåäö";
       i1.values({ val: "a" });
       i2.values({ val: "å" });
@@ -92,7 +98,7 @@ describe("Sort", function () {
       expect(list.items[4].values().val).toBe("ä");
       expect(list.items[5].values().val).toBe("ö");
     });
-    it("should sort åäö desc case insensitive", function () {
+    it("should sort åäö desc case insensitive", () => {
       list.alphabet = "AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvXxYyZzÅåÄäÖö";
       i1.values({ val: "a" });
       i2.values({ val: "Å" });
@@ -108,7 +114,7 @@ describe("Sort", function () {
       expect(list.items[4].values().val).toBe("o");
       expect(list.items[5].values().val).toBe("a");
     });
-    it("should sort åäö asc case insensitive", function () {
+    it("should sort åäö asc case insensitive", () => {
       list.alphabet = "AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvXxYyZzÅåÄäÖö";
       i1.values({ val: "A" });
       i2.values({ val: "å" });
@@ -124,7 +130,7 @@ describe("Sort", function () {
       expect(list.items[4].values().val).toBe("Ä");
       expect(list.items[5].values().val).toBe("ö");
     });
-    it("should handle case-insensitive by default", function () {
+    it("should handle case-insensitive by default", () => {
       i1.values({ val: "e" });
       i2.values({ val: "b" });
       i4.values({ val: "F" });
@@ -139,7 +145,7 @@ describe("Sort", function () {
       expect(list.items[4].values().val).toBe("e");
       expect(list.items[5].values().val).toBe("F");
     });
-    it("should disable insensitive", function () {
+    it("should disable insensitive", () => {
       i1.values({ val: "e" });
       i2.values({ val: "b" });
       i4.values({ val: "F" });
@@ -154,7 +160,7 @@ describe("Sort", function () {
       expect(list.items[4].values().val).toBe("b");
       expect(list.items[5].values().val).toBe("e");
     });
-    it("should sort dates", function () {
+    it("should sort dates", () => {
       i1.values({ val: "2008-12-10" });
       i2.values({ val: "2008-11-10" });
       i3.values({ val: "2007-11-10" });
@@ -169,7 +175,7 @@ describe("Sort", function () {
       expect(list.items[4].values().val).toBe("2008-12-10");
       expect(list.items[5].values().val).toBe("2009-12-10");
     });
-    it("should sort file names (a bit wrong)", function () {
+    it("should sort file names (a bit wrong)", () => {
       i1.values({ val: "car.mov" });
       i2.values({ val: "01alpha.sgi" });
       i3.values({ val: "001alpha.sgi" });
@@ -184,7 +190,7 @@ describe("Sort", function () {
       expect(list.items[4].values().val).toBe("car.mov");
       expect(list.items[5].values().val).toBe("my.string_41299.tif");
     });
-    it("should show order of sorted floates (a bit wrong)", function () {
+    it("should show order of sorted floates (a bit wrong)", () => {
       i1.values({ val: "10.0401" });
       i2.values({ val: "10.022" });
       i3.values({ val: "10.021999" });
@@ -199,7 +205,7 @@ describe("Sort", function () {
       expect(list.items[4].values().val).toBe("10.021999");
       expect(list.items[5].values().val).toBe("11.231");
     });
-    it("should sort IP addresses", function () {
+    it("should sort IP addresses", () => {
       i1.values({ val: "192.168.1.1" });
       i2.values({ val: "192.168.0.100" });
       i3.values({ val: "192.168.0.1" });
@@ -214,18 +220,18 @@ describe("Sort", function () {
       expect(list.items[4].values().val).toBe("192.168.1.2");
       expect(list.items[5].values().val).toBe("192.168.1.3");
     });
-    it("should not break with weird values", function () {
+    it("should not break with weird values", () => {
       i1.values({ val: undefined });
       i2.values({ val: null });
       i3.values({ val: 0 });
-      i4.values({ val: function () {} });
+      i4.values({ val() {} });
       i5.values({ val: { foo: "bar" } });
 
-      expect(function () {
+      expect(() => {
         list.sort("val");
       }).not.toThrow();
     });
-    it("should handle values from issue 387", function () {
+    it("should handle values from issue 387", () => {
       i1.values({ val: "Test" });
       i2.values({ val: "Test1Test2" });
       i3.values({ val: "Bill-To Phone1 Extension" });
@@ -241,7 +247,7 @@ describe("Sort", function () {
       expect(list.items[5].values().val).toBe("z");
     });
 
-    xit("should show how random values are sorted", function () {
+    xit("should show how random values are sorted", () => {
       list.add({ id: "7", val: "" });
       list.add({ id: "8", val: "" });
       list.add({ id: "9", val: "" });
@@ -249,12 +255,12 @@ describe("Sort", function () {
       list.add({ id: "11", val: "" });
       list.add({ id: "12", val: "" });
 
-      var i7 = list.get("id", "7")[0],
-        i8 = list.get("id", "8")[0],
-        i9 = list.get("id", "9")[0],
-        i10 = list.get("id", "10")[0],
-        i11 = list.get("id", "11")[0],
-        i12 = list.get("id", "12")[0];
+      const i7 = list.get("id", "7")[0];
+      const i8 = list.get("id", "8")[0];
+      const i9 = list.get("id", "9")[0];
+      const i10 = list.get("id", "10")[0];
+      const i11 = list.get("id", "11")[0];
+      const i12 = list.get("id", "12")[0];
 
       i1.values({ val: undefined });
       i2.values({ val: "" });
@@ -287,7 +293,7 @@ describe("Sort", function () {
       expect(list.items[11].values().val).toBe("z");
     });
 
-    it("should handle not longer (since 1.4.0) space and zero the same for desc and asc", function () {
+    it("should handle not longer (since 1.4.0) space and zero the same for desc and asc", () => {
       list.clear();
       list.add({ val: "" });
       list.add({ val: "0" });
@@ -308,8 +314,8 @@ describe("Sort", function () {
     });
   });
 
-  describe("Custom sort function", function () {
-    it("should use custom sort option", function () {
+  describe("Custom sort function", () => {
+    it("should use custom sort option", () => {
       i1.values({ val: "<input value='b' />" });
       i2.values({ val: "<input value='a' />" });
       i3.values({ val: "<input value='c' />" });
@@ -317,7 +323,7 @@ describe("Sort", function () {
       i5.values({ val: "<input value='s' />" });
       i6.values({ val: "<input value='y' />" });
       list.sort("val", {
-        sortFunction: function (itemA, itemB, options) {
+        sortFunction(itemA, itemB, options) {
           return naturalSort($(itemA.values()[options.valueName]).val(), $(itemB.values()[options.valueName]).val());
         },
       });
@@ -328,10 +334,9 @@ describe("Sort", function () {
       expect(list.items[4].values().val).toBe("<input value='y' />");
       expect(list.items[5].values().val).toBe("<input value='z' />");
     });
-    it("should use default custom sort function", function () {
-      list.sortFunction = function (itemA, itemB, options) {
-        return naturalSort($(itemA.values()[options.valueName]).val(), $(itemB.values()[options.valueName]).val());
-      };
+    it("should use default custom sort function", () => {
+      list.sortFunction = (itemA, itemB, options) =>
+        naturalSort($(itemA.values()[options.valueName]).val(), $(itemB.values()[options.valueName]).val());
       i1.values({ val: "<input value='b' />" });
       i2.values({ val: "<input value='a' />" });
       i3.values({ val: "<input value='c' />" });
@@ -346,10 +351,9 @@ describe("Sort", function () {
       expect(list.items[4].values().val).toBe("<input value='y' />");
       expect(list.items[5].values().val).toBe("<input value='z' />");
     });
-    it("should use default custom sort function with order desc", function () {
-      list.sortFunction = function (itemA, itemB, options) {
-        return naturalSort($(itemA.values()[options.valueName]).val(), $(itemB.values()[options.valueName]).val());
-      };
+    it("should use default custom sort function with order desc", () => {
+      list.sortFunction = (itemA, itemB, options) =>
+        naturalSort($(itemA.values()[options.valueName]).val(), $(itemB.values()[options.valueName]).val());
       i1.values({ val: "<input value='b' />" });
       i2.values({ val: "<input value='a' />" });
       i3.values({ val: "<input value='c' />" });

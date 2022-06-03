@@ -1,22 +1,22 @@
-const fixture = require('./fixtures')
+const fixture = require("./fixtures");
 
-describe('Trigger', function () {
-  var list
+describe("Trigger", () => {
+  let list;
 
-  beforeAll(function () {
-    list = fixture.list(['name', 'born'], fixture.all)
-  })
+  beforeAll(() => {
+    list = fixture.list(["name", "born"], fixture.all);
+  });
 
-  afterAll(function () {
-    fixture.removeList()
-  })
+  afterAll(() => {
+    fixture.removeList();
+  });
 
-  describe('General', function () {
-    it('should be triggered by searchComplete', function (done) {
-      list.on('searchComplete', function () {
-        done()
-      })
-      list.trigger('searchComplete')
-    })
-  })
-})
+  describe("General", () => {
+    it("should be triggered by searchComplete", (done) => {
+      list.on("searchComplete", () => {
+        done();
+      });
+      list.trigger("searchComplete");
+    });
+  });
+});
