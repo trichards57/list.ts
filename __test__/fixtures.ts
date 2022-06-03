@@ -1,8 +1,8 @@
-const $ = require('jquery'),
-  List = require('../src/index')
+import $ from 'jquery'
+import List from '../src/index'
 
 var fixture = {
-  list: function (valueNames, items) {
+  list: function (valueNames: string[], items: any[]) {
     var listHtml = $('<div id="list"><ul class="list"></ul></div>'),
       item = ''
 
@@ -52,7 +52,8 @@ var fixture = {
     name: 'Hasse Strömberg',
     born: '1955',
   },
+  all: [] as { name: string; born: string }[],
 }
 fixture.all = [fixture.jonny, fixture.martina, fixture.angelica, fixture.sebastian, fixture.imma, fixture.hasse]
 
-module.exports = fixture
+export default fixture

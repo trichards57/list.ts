@@ -1,5 +1,10 @@
-const $ = require('jquery'),
-  List = require('../src/index')
+/**
+ * @jest-environment jsdom
+ */
+
+import 'jest'
+import $ from 'jquery'
+import List from '../src/index'
 
 describe('Create', function () {
   describe('With HTML items', function () {
@@ -122,9 +127,7 @@ describe('Create', function () {
       'list',
       {
         valueNames: ['name'],
-        item: function (values) {
-          return `<li data-template-fn-${values.name.toLowerCase()}><span class="name"></span></li>`
-        },
+        item: (values) => `<li data-template-fn-${values.name.toLowerCase()}><span class="name"></span></li>`,
       },
       [{ name: 'Jonny' }]
     )

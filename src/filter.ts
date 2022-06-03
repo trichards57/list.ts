@@ -1,9 +1,18 @@
-export default function (list) {
+export default function (list: {
+  handlers: { filterStart: any[]; filterComplete: any[] }
+  trigger: (arg0: string) => void
+  i: number
+  reset: { filter: () => void }
+  filtered: boolean
+  items: any
+  update: () => void
+  visibleItems: any
+}) {
   // Add handlers
   list.handlers.filterStart = list.handlers.filterStart || []
   list.handlers.filterComplete = list.handlers.filterComplete || []
 
-  return function (filterFunction) {
+  return function (filterFunction: (arg0: any) => any) {
     list.trigger('filterStart')
     list.i = 1 // Reset paging
     list.reset.filter()

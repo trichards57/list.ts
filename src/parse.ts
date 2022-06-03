@@ -1,7 +1,8 @@
-export default function (list) {
-  var Item = require('./item')(list)
+import Item from './item'
+import List from './index'
 
-  var getChildren = function (parent) {
+export default function (list: List) {
+  var getChildren = function (parent: { childNodes: any }) {
     var nodes = parent.childNodes,
       items = []
     for (var i = 0, il = nodes.length; i < il; i++) {
@@ -13,12 +14,12 @@ export default function (list) {
     return items
   }
 
-  var parse = function (itemElements, valueNames) {
+  var parse = function (itemElements: string | any[], valueNames: any) {
     for (var i = 0, il = itemElements.length; i < il; i++) {
-      list.items.push(new Item(valueNames, itemElements[i]))
+      list.items.push(new Item(list, valueNames, itemElements[i]))
     }
   }
-  var parseAsync = function (itemElements, valueNames) {
+  var parseAsync = function (itemElements: any[], valueNames: any) {
     var itemsToIndex = itemElements.splice(0, 50) // TODO: If < 100 items, what happens in IE etc?
     parse(itemsToIndex, valueNames)
     if (itemElements.length > 0) {

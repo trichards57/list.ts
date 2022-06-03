@@ -1,4 +1,8 @@
-export default function (text, pattern, options) {
+export default function (
+  text: string,
+  pattern: string,
+  options: { location?: number; distance?: number; threshold?: number }
+) {
   // Aproximately where in the text is the pattern expected to be found?
   var Match_Location = options.location || 0
 
@@ -12,26 +16,25 @@ export default function (text, pattern, options) {
   if (pattern.length > 32) return false // This algorithm cannot be used
 
   // Set starting location at beginning text and initialise the alphabet.
-  var loc = Match_Location,
-    s = (function () {
-      var q = {},
-        i
+  var loc = Match_Location
+  let s = (function () {
+    var q = {} as { [idx: string]: number }
 
-      for (i = 0; i < pattern.length; i++) {
-        q[pattern.charAt(i)] = 0
-      }
+    for (let i = 0; i < pattern.length; i++) {
+      q[pattern.charAt(i)] = 0
+    }
 
-      for (i = 0; i < pattern.length; i++) {
-        q[pattern.charAt(i)] |= 1 << (pattern.length - i - 1)
-      }
+    for (let i = 0; i < pattern.length; i++) {
+      q[pattern.charAt(i)] |= 1 << (pattern.length - i - 1)
+    }
 
-      return q
-    })()
+    return q
+  })()
 
   // Compute and return the score for a match with e errors and x location.
   // Accesses loc and pattern through being a closure.
 
-  function match_bitapScore_(e, x) {
+  function match_bitapScore_(e: number, x: number) {
     var accuracy = e / pattern.length,
       proximity = Math.abs(loc - x)
 

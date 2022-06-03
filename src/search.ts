@@ -1,5 +1,22 @@
-export default function (list) {
-  var columns, searchString, customSearch
+import { bind, debounce } from './utils/events'
+import toString from './utils/to-string'
+
+export default function (list: {
+  i: number
+  templater: { clear: () => void }
+  items: string | any[]
+  searchColumns: string | any[]
+  reset: { search: () => void }
+  searched: boolean
+  trigger: (arg0: string) => void
+  update: () => void
+  visibleItems: any
+  handlers: { searchStart: any[]; searchComplete: any[] }
+  listContainer: Element
+  searchClass: any
+  searchDelay: any
+}) {
+  var columns: string | any[], searchString: string, customSearch: (arg0: string, arg1: string | any[]) => void
 
   var prepare = {
     resetList: function () {
@@ -7,7 +24,7 @@ export default function (list) {
       list.templater.clear()
       customSearch = undefined
     },
-    setOptions: function (args) {
+    setOptions: function (args: IArguments) {
       if (args.length == 2 && args[1] instanceof Array) {
         columns = args[1]
       } else if (args.length == 2 && typeof args[1] == 'function') {
@@ -26,12 +43,12 @@ export default function (list) {
         columns = list.searchColumns === undefined ? prepare.toArray(list.items[0].values()) : list.searchColumns
       }
     },
-    setSearchString: function (s) {
-      s = list.utils.toString(s).toLowerCase()
+    setSearchString: function (s: string) {
+      s = toString(s).toLowerCase()
       s = s.replace(/[-[\]{}()*+?.,\\^$|#]/g, '\\$&') // Escape regular expression characters
       searchString = s
     },
-    toArray: function (values) {
+    toArray: function (values: any) {
       var tmpColumn = []
       for (var name in values) {
         tmpColumn.push(name)
@@ -84,7 +101,7 @@ export default function (list) {
     },
   }
 
-  var searchMethod = function (str) {
+  var searchMethod = function (str: string) {
     list.trigger('searchStart')
 
     prepare.resetList()
@@ -111,10 +128,10 @@ export default function (list) {
   list.handlers.searchStart = list.handlers.searchStart || []
   list.handlers.searchComplete = list.handlers.searchComplete || []
 
-  list.utils.events.bind(
-    list.utils.getByClass(list.listContainer, list.searchClass),
+  bind(
+    list.listContainer.getElementsByClassName(list.searchClass),
     'keyup',
-    list.utils.events.debounce(function (e) {
+    debounce(function (e) {
       var target = e.target || e.srcElement, // IE have srcElement
         alreadyCleared = target.value === '' && !list.searched
       if (!alreadyCleared) {
@@ -125,7 +142,7 @@ export default function (list) {
   )
 
   // Used to detect click on HTML5 clear button
-  list.utils.events.bind(list.utils.getByClass(list.listContainer, list.searchClass), 'input', function (e) {
+  bind(list.listContainer.getElementsByClassName(list.searchClass), 'input', function (e) {
     var target = e.target || e.srcElement
     if (target.value === '') {
       searchMethod('')

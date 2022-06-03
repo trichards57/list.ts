@@ -1,110 +1,173 @@
-import naturalSort from 'string-natural-compare'
-import getByClass from './utils/get-by-class'
-import extend from './utils/extend'
-import indexOf from './utils/index-of'
-import * as events from './utils/events'
-import toString from './utils/to-string'
-import getAttribute from './utils/get-attribute'
-import toArray from './utils/to-array'
+import pagination from './pagination'
+import addAsync from './add-async'
+import parseInit from './parse'
+import templaterInit, { Templater } from './templater'
+import searchInit from './search'
+import filterInit from './filter'
+import sortInit, { ISortOptions } from './sort'
+import fuzzySearchInit from './fuzzy-search'
+import Item from './item'
 
-export default function (id: string, options: { pagination: boolean | [{}]; fuzzySearch: {} }, values: []) {
-  var self = this,
-    init,
-    Item = require('./item')(self),
-    addAsync = require('./add-async')(self),
-    initPagination = require('./pagination').default(self)
-
-  init = {
-    start: function () {
-      self.listClass = 'list'
-      self.searchClass = 'search'
-      self.sortClass = 'sort'
-      self.page = 10000
-      self.i = 1
-      self.items = []
-      self.visibleItems = []
-      self.matchingItems = []
-      self.searched = false
-      self.filtered = false
-      self.searchColumns = undefined
-      self.searchDelay = 0
-      self.handlers = { updated: [] }
-      self.valueNames = []
-      self.utils = {
-        getByClass: getByClass,
-        extend: extend,
-        indexOf: indexOf,
-        events: events,
-        toString: toString,
-        naturalSort: naturalSort,
-        getAttribute: getAttribute,
-        toArray: toArray,
-      }
-
-      self.utils.extend(self, options)
-
-      self.listContainer = typeof id === 'string' ? document.getElementById(id) : id
-      if (!self.listContainer) {
-        return
-      }
-      self.list = getByClass(self.listContainer, self.listClass, true)
-
-      self.parse = require('./parse').default(self)
-      self.templater = require('./templater').default(self)
-      self.search = require('./search').default(self)
-      self.filter = require('./filter')(self)
-      self.sort = require('./sort').default(self)
-      self.fuzzySearch = require('./fuzzy-search')(self, options.fuzzySearch)
-
-      this.handlers()
-      this.items()
-      this.pagination()
-
-      self.update()
-    },
-    handlers: function () {
-      for (var handler in self.handlers) {
-        if (self[handler] && self.handlers.hasOwnProperty(handler)) {
-          self.on(handler, self[handler])
-        }
-      }
-    },
-    items: function () {
-      self.parse(self.list)
-      if (values !== undefined) {
-        self.add(values)
-      }
-    },
-    pagination: function () {
-      if (options.pagination !== undefined && options.pagination !== false) {
-        if (options.pagination === true) {
-          options.pagination = [{}]
-        } else if (options.pagination[0] === undefined) {
-          options.pagination = [options.pagination]
-        }
-        for (var i = 0, il = options.pagination.length; i < il; i++) {
-          initPagination(options.pagination[i])
-        }
-      }
-    },
+export default class List {
+  public alphabet: boolean
+  public listClass: string
+  public searchClass: string
+  public sortClass: string
+  public page: number
+  public i: number
+  public item: string | ((a: any[]) => string)
+  public items: Item[]
+  public visibleItems: Item[]
+  public matchingItems: Item[]
+  public searched: boolean
+  public filtered: boolean
+  public searchColumns: string[]
+  public searchDelay: number
+  public valueNames: any[]
+  public values: any[]
+  public handlers: {
+    parseComplete: ((list: List) => void)[]
+    updated: ((list: List) => void)[]
+    filterStart: ((list: List) => void)[]
+    filterComplete: ((list: List) => void)[]
+    sortStart: ((list: List) => void)[]
+    sortComplete: ((list: List) => void)[]
+    searchStart: ((list: List) => void)[]
+    searchComplete: ((list: List) => void)[]
+  } = {
+    parseComplete: [],
+    updated: [],
+    filterStart: [],
+    filterComplete: [],
+    sortStart: [],
+    sortComplete: [],
+    searchStart: [],
+    searchComplete: [],
   }
+  public listContainer: HTMLElement
+  public list: Element
+  parse: (l: Element) => void
+  templater: Templater
+  search: (str: string) => any
+  filter: (filterFunction: (arg0: any) => any) => any
+  sort: (
+    eventArgs: string | UIEvent,
+    options?: {
+      order?: 'asc' | 'desc'
+      insensitive?: boolean
+      sortFunction?: (itemA: unknown, itemB: unknown, options: ISortOptions) => number
+      alphabet?: boolean
+    }
+  ) => void
+  fuzzySearch: (str: any, columns: (searchString: any, columns: any) => void) => void
+  reset: { filter: () => Window & typeof globalThis; search: () => Window & typeof globalThis }
+
+  constructor(
+    id: string | Element,
+    options: {
+      pagination?: boolean | [{}]
+      fuzzySearch?: {}
+      listClass?: string
+      item?: string | ((a: any[]) => string)
+      valueNames: string[]
+      searchClass?: string
+      sortClass?: string
+    },
+    values?: any[]
+  ) {
+    this.listClass = 'list'
+    this.searchClass = 'search'
+    this.sortClass = 'sort'
+    this.page = 10000
+    this.i = 1
+    this.items = []
+    this.visibleItems = []
+    this.matchingItems = []
+    this.searched = false
+    this.filtered = false
+    this.searchColumns = undefined
+    this.searchDelay = 0
+    this.valueNames = []
+    this.values = values
+
+    this.listContainer = (typeof id === 'string' ? document.getElementById(id) : id) as HTMLElement
+    if (!this.listContainer) {
+      throw new Error('List container needs to be a valid element.')
+    }
+    this.list = (this.listContainer as HTMLElement).getElementsByClassName(this.listClass)[0]
+
+    this.reset = {
+      filter: function () {
+        var is = this.items,
+          il = is.length
+        while (il--) {
+          is[il].filtered = false
+        }
+        return this
+      },
+      search: function () {
+        var is = this.items,
+          il = is.length
+        while (il--) {
+          is[il].found = false
+        }
+        return this
+      },
+    }
+
+    this.parse = parseInit(this)
+    this.templater = templaterInit(this)
+    this.search = searchInit(this)
+    this.filter = filterInit(this)
+    this.sort = sortInit(this)
+    this.fuzzySearch = fuzzySearchInit(this, options.fuzzySearch)
+
+    this._items()
+    this._pagination(options)
+
+    this.update()
+  }
+
+  private _items() {
+    this.parse(this.list)
+    if (this.values !== undefined) {
+      this.add(this.values)
+    }
+  }
+
+  private _pagination(options: { pagination?: any }) {
+    if (options.pagination !== undefined && options.pagination !== false) {
+      if (options.pagination === true) {
+        options.pagination = [{}]
+      } else if (options.pagination[0] === undefined) {
+        options.pagination = [options.pagination]
+      }
+      const initPagination = pagination(this)
+
+      for (var i = 0, il = options.pagination.length; i < il; i++) {
+        initPagination(options.pagination[i])
+      }
+    }
+  }
+
+  indexAsync() {}
 
   /*
    * Re-parse the List, use if html have changed
    */
-  this.reIndex = function () {
-    self.items = []
-    self.visibleItems = []
-    self.matchingItems = []
-    self.searched = false
-    self.filtered = false
-    self.parse(self.list)
+  reIndex() {
+    this.items = []
+    this.visibleItems = []
+    this.matchingItems = []
+    this.searched = false
+    this.filtered = false
+    this.parse(this.list)
   }
 
-  this.toJSON = function () {
+  toJSON() {
     var json = []
-    for (var i = 0, il = self.items.length; i < il; i++) {
-      json.push(self.items[i].values())
+    for (var i = 0, il = this.items.length; i < il; i++) {
+      json.push(this.items[i].values())
     }
     return json
   }
@@ -112,14 +175,14 @@ export default function (id: string, options: { pagination: boolean | [{}]; fuzz
   /*
    * Add object to list
    */
-  this.add = function (values: {} | {}[], callback?: () => void) {
+  add(values: {} | {}[], callback?: () => void) {
     const vals = Array.isArray(values) ? values : [values]
 
     if (vals.length === 0) {
       return
     }
     if (callback) {
-      addAsync(vals.slice(0), callback)
+      addAsync(this)(vals.slice(0), callback)
       return
     }
     var added = [],
@@ -127,48 +190,41 @@ export default function (id: string, options: { pagination: boolean | [{}]; fuzz
 
     for (var i = 0, il = vals.length; i < il; i++) {
       var item = null
-      notCreate = self.items.length > self.page ? true : false
-      item = new Item(vals[i], undefined, notCreate)
-      self.items.push(item)
+      notCreate = this.items.length > this.page ? true : false
+      item = new Item(this, vals[i], undefined, notCreate)
+      this.items.push(item)
       added.push(item)
     }
-    self.update()
+    this.update()
     return added
-  }
-
-  this.show = function (i: number, page: number) {
-    this.i = i
-    this.page = page
-    self.update()
-    return self
   }
 
   /* Removes object from list.
    * Loops through the list and removes objects where
    * property "valuename" === value
    */
-  this.remove = function (valueName: string, value: {}, options: {}) {
+  remove(valueName: string, value: {}) {
     var found = 0
-    for (var i = 0, il = self.items.length; i < il; i++) {
-      if (self.items[i].values()[valueName] == value) {
-        self.templater.remove(self.items[i], options)
-        self.items.splice(i, 1)
+    for (var i = 0, il = this.items.length; i < il; i++) {
+      if (this.items[i].values()[valueName] == value) {
+        this.templater.remove(this.items[i])
+        this.items.splice(i, 1)
         il--
         i--
         found++
       }
     }
-    self.update()
+    this.update()
     return found
   }
 
   /* Gets the objects in the list which
    * property "valueName" === value
    */
-  this.get = function (valueName: string, value: {}) {
+  get(valueName: string, value: {}) {
     var matchedItems = []
-    for (var i = 0, il = self.items.length; i < il; i++) {
-      var item = self.items[i]
+    for (var i = 0, il = this.items.length; i < il; i++) {
+      var item = this.items[i]
       if (item.values()[valueName] == value) {
         matchedItems.push(item)
       }
@@ -179,82 +235,68 @@ export default function (id: string, options: { pagination: boolean | [{}]; fuzz
   /*
    * Get size of the list
    */
-  this.size = function () {
-    return self.items.length
+  size() {
+    return this.items.length
+  }
+
+  show(i: number, page: number) {
+    this.i = i
+    this.page = page
+    this.update()
+    return this
   }
 
   /*
    * Removes all items from the list
    */
-  this.clear = function () {
-    self.templater.clear()
-    self.items = []
-    return self
+  clear() {
+    this.templater.clear()
+    this.items = []
+    return this
   }
 
-  this.on = function (event: string, callback: () => void) {
-    self.handlers[event].push(callback)
-    return self
+  on(event: keyof typeof this.handlers, callback: () => void) {
+    this.handlers[event].push(callback)
+    return this
   }
 
-  this.off = function (event: string, callback: () => void) {
-    var e = self.handlers[event]
-    var index = indexOf(e, callback)
+  off(event: keyof typeof this.handlers, callback: () => void) {
+    var e = this.handlers[event]
+    var index = e.indexOf(callback)
     if (index > -1) {
       e.splice(index, 1)
     }
-    return self
+    return this
   }
 
-  this.trigger = function (event: string) {
-    var i = self.handlers[event].length
+  trigger(event: keyof typeof this.handlers) {
+    var i = this.handlers[event].length
     while (i--) {
-      self.handlers[event][i](self)
+      this.handlers[event][i](this)
     }
-    return self
+    return this
   }
 
-  this.reset = {
-    filter: function () {
-      var is = self.items,
-        il = is.length
-      while (il--) {
-        is[il].filtered = false
-      }
-      return self
-    },
-    search: function () {
-      var is = self.items,
-        il = is.length
-      while (il--) {
-        is[il].found = false
-      }
-      return self
-    },
-  }
-
-  this.update = function () {
-    var is = self.items,
+  update() {
+    var is = this.items,
       il = is.length
 
-    self.visibleItems = []
-    self.matchingItems = []
-    self.templater.clear()
+    this.visibleItems = []
+    this.matchingItems = []
+    this.templater.clear()
     for (var i = 0; i < il; i++) {
-      if (is[i].matching() && self.matchingItems.length + 1 >= self.i && self.visibleItems.length < self.page) {
+      if (is[i].matching() && this.matchingItems.length + 1 >= this.i && this.visibleItems.length < this.page) {
         is[i].show()
-        self.visibleItems.push(is[i])
-        self.matchingItems.push(is[i])
+        this.visibleItems.push(is[i])
+        this.matchingItems.push(is[i])
       } else if (is[i].matching()) {
-        self.matchingItems.push(is[i])
+        this.matchingItems.push(is[i])
         is[i].hide()
       } else {
         is[i].hide()
       }
     }
-    self.trigger('updated')
-    return self
+    this.trigger('updated')
+    return this
   }
-
-  init.start()
 }

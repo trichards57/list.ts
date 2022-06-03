@@ -1,10 +1,24 @@
 import { bind } from './utils/events'
 import List from './index'
 
-export default function (list) {
+export default function (list: {
+  page: number
+  listContainer: HTMLElement
+  matchingItems: string | any[]
+  i: any
+  show: (arg0: number, arg1: any) => void
+  on: (arg0: string, arg1: () => void) => void
+}) {
   var isHidden = false
 
-  var refresh = function (pagingList, options) {
+  var refresh = function (
+    pagingList: {
+      clear: () => void
+      add: (arg0: { page: string | number; dotted: boolean }) => any[]
+      size: () => any
+    },
+    options: { innerWindow?: number; left?: number; outerWindow?: number; right?: number }
+  ) {
     if (list.page < 1) {
       list.listContainer.style.display = 'none'
       isHidden = true
@@ -51,28 +65,44 @@ export default function (list) {
   }
 
   var is = {
-    number: function (i, left, right, currentPage, innerWindow) {
+    number: function (i: any, left: any, right: any, currentPage: any, innerWindow: any) {
       return this.left(i, left) || this.right(i, right) || this.innerWindow(i, currentPage, innerWindow)
     },
-    left: function (i, left) {
+    left: function (i: number, left: number) {
       return i <= left
     },
-    right: function (i, right) {
+    right: function (i: number, right: number) {
       return i > right
     },
-    innerWindow: function (i, currentPage, innerWindow) {
+    innerWindow: function (i: number, currentPage: number, innerWindow: number) {
       return i >= currentPage - innerWindow && i <= currentPage + innerWindow
     },
-    dotted: function (pagingList, i, left, right, currentPage, innerWindow, currentPageItem) {
+    dotted: function (
+      pagingList: any,
+      i: any,
+      left: any,
+      right: any,
+      currentPage: any,
+      innerWindow: any,
+      currentPageItem: any
+    ) {
       return (
         this.dottedLeft(pagingList, i, left, right, currentPage, innerWindow) ||
         this.dottedRight(pagingList, i, left, right, currentPage, innerWindow, currentPageItem)
       )
     },
-    dottedLeft: function (pagingList, i, left, right, currentPage, innerWindow) {
+    dottedLeft: function (pagingList: any, i: any, left: number, right: any, currentPage: any, innerWindow: any) {
       return i == left + 1 && !this.innerWindow(i, currentPage, innerWindow) && !this.right(i, right)
     },
-    dottedRight: function (pagingList, i, left, right, currentPage, innerWindow, currentPageItem) {
+    dottedRight: function (
+      pagingList: { items: { values: () => { (): any; new (): any; dotted: any } }[] },
+      i: any,
+      left: any,
+      right: any,
+      currentPage: any,
+      innerWindow: any,
+      currentPageItem: number
+    ) {
       if (pagingList.items[currentPageItem - 1].values().dotted) {
         return false
       } else {
@@ -81,7 +111,14 @@ export default function (list) {
     },
   }
 
-  return function (options) {
+  return function (options: {
+    paginationClass?: string
+    item?: string
+    innerWindow?: number
+    left?: number
+    outerWindow?: number
+    right?: number
+  }) {
     var pagingList = new List(list.listContainer.id, {
       listClass: options.paginationClass || 'pagination',
       item: options.item || "<li><a class='page' href='#'></a></li>",
@@ -90,10 +127,10 @@ export default function (list) {
       sortClass: 'pagination-sort-that-is-not-supposed-to-exist',
     })
 
-    bind(pagingList.listContainer, 'click', function (e) {
+    bind([pagingList.listContainer], 'click', function (e) {
       var target = e.target || e.srcElement,
-        page = list.utils.getAttribute(target, 'data-page'),
-        i = list.utils.getAttribute(target, 'data-i')
+        page = target.getAttribute('data-page'),
+        i = target.getAttribute('data-i')
       if (i) {
         list.show((i - 1) * page + 1, page)
       }

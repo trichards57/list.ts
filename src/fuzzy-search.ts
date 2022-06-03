@@ -1,25 +1,33 @@
-import { bind } from './utils/events'
-import extend from './utils/extend'
+import { bind, debounce } from './utils/events'
 import toString from './utils/to-string'
-import getByClass from './utils/get-by-class'
 import fuzzy from './utils/fuzzy'
 
-export default function (list, options) {
+export default function (
+  list: {
+    items: string | any[]
+    listContainer: Element
+    search: (
+      arg0: any,
+      arg1: (searchString: any, columns: any) => void,
+      arg2?: (searchString: any, columns: any) => void
+    ) => void
+    searchDelay: any
+  },
+  options: { multiSearch?: boolean; searchClass?: string; location?: number; distance?: number; threshold?: number }
+) {
   options = options || {}
 
-  options = extend(
-    {
-      location: 0,
-      distance: 100,
-      threshold: 0.4,
-      multiSearch: true,
-      searchClass: 'fuzzy-search',
-    },
-    options
-  )
+  options = {
+    location: 0,
+    distance: 100,
+    threshold: 0.4,
+    multiSearch: true,
+    searchClass: 'fuzzy-search',
+    ...options,
+  }
 
   var fuzzySearch = {
-    search: function (searchString, columns) {
+    search: function (searchString: string, columns: any) {
       // Substract arguments from the searchString or put searchString as only argument
       var searchArguments = options.multiSearch ? searchString.replace(/ +$/, '').split(/ +/) : [searchString]
 
@@ -27,7 +35,11 @@ export default function (list, options) {
         fuzzySearch.item(list.items[k], columns, searchArguments)
       }
     },
-    item: function (item, columns, searchArguments) {
+    item: function (
+      item: { values: () => any; found: boolean },
+      columns: string | any[],
+      searchArguments: string | any[]
+    ) {
       var found = true
       for (var i = 0; i < searchArguments.length; i++) {
         var foundArgument = false
@@ -42,7 +54,11 @@ export default function (list, options) {
       }
       item.found = found
     },
-    values: function (values, value, searchArgument) {
+    values: function (
+      values: { [x: string]: { toString(): string }; hasOwnProperty: (arg0: any) => any },
+      value: string | number,
+      searchArgument: string
+    ) {
       if (values.hasOwnProperty(value)) {
         var text = toString(values[value]).toLowerCase()
 
@@ -55,15 +71,15 @@ export default function (list, options) {
   }
 
   bind(
-    getByClass(list.listContainer, options.searchClass),
+    list.listContainer.getElementsByClassName(options.searchClass),
     'keyup',
-    list.utils.events.debounce(function (e) {
-      var target = e.target || e.srcElement // IE have srcElement
+    debounce(function (e) {
+      var target = e.target
       list.search(target.value, fuzzySearch.search)
     }, list.searchDelay)
   )
 
-  return function (str, columns) {
+  return function (str: any, columns: (searchString: any, columns: any) => void) {
     list.search(str, columns, fuzzySearch.search)
   }
 }

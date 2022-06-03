@@ -1,7 +1,12 @@
-const fixture = require('./fixtures')
+/**
+ * @jest-environment jsdom
+ */
+
+import fixture from './fixtures'
+import List from "../src/index"
 
 describe('Add, get, remove', function () {
-  var list
+  var list: List
 
   beforeAll(function () {
     list = fixture.list(['name'], [{ name: 'Jonny' }])
