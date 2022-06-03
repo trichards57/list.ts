@@ -1,5 +1,7 @@
 /* eslint-disable no-param-reassign */
+const naturalSort = require("string-natural-compare");
 const toString = require("./utils/to-string");
+const events = require("./utils/events");
 
 module.exports = (list) => {
   const buttons = {
@@ -83,7 +85,7 @@ module.exports = (list) => {
         sortOptions.caseInsensitive = !sortOptions.alphabet && options.insensitive;
 
         return (
-          list.utils.naturalSort(
+          naturalSort(
             toString(itemA.values()[options.valueName]),
             toString(itemB.values()[options.valueName]),
             sortOptions
@@ -102,7 +104,7 @@ module.exports = (list) => {
   list.handlers.sortComplete = list.handlers.sortComplete || [];
 
   buttons.els = list.listContainer.getElementsByClassName(list.sortClass);
-  list.utils.events.bind(buttons.els, "click", sort);
+  events.bind(buttons.els, "click", sort);
   list.on("searchStart", buttons.clear);
   list.on("filterStart", buttons.clear);
 

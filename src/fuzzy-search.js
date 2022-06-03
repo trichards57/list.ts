@@ -52,7 +52,7 @@ module.exports = (list, options) => {
   events.bind(
     list.listContainer.getElementsByClassName(opts.searchClass),
     "keyup",
-    list.utils.events.debounce((e) => {
+    events.debounce((e) => {
       list.search(e.target.value, fuzzySearch.search);
     }, list.searchDelay)
   );

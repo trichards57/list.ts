@@ -1,8 +1,4 @@
 /* eslint-disable no-param-reassign */
-const naturalSort = require("string-natural-compare");
-const events = require("./utils/events");
-const toString = require("./utils/to-string");
-const toArray = require("./utils/to-array");
 const getItem = require("./item");
 const getAddAsync = require("./add-async");
 
@@ -28,12 +24,6 @@ module.exports = function List(id, options, values) {
       self.searchDelay = 0;
       self.handlers = { updated: [] };
       self.valueNames = [];
-      self.utils = {
-        events,
-        toString,
-        naturalSort,
-        toArray,
-      };
 
       Object.assign(self, options);
 

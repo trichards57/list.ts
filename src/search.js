@@ -1,4 +1,6 @@
 /* eslint-disable no-param-reassign */
+const toString = require("./utils/to-string");
+const events = require("./utils/events");
 
 module.exports = (list) => {
   let columns;
@@ -30,7 +32,7 @@ module.exports = (list) => {
       }
     },
     setSearchString(s) {
-      s = list.utils.toString(s).toLowerCase();
+      s = toString(s).toLowerCase();
       s = s.replace(/[-[\]{}()*+?.,\\^$|#]/g, "\\$&"); // Escape regular expression characters
       searchString = s;
     },
@@ -112,10 +114,10 @@ module.exports = (list) => {
   list.handlers.searchStart = list.handlers.searchStart || [];
   list.handlers.searchComplete = list.handlers.searchComplete || [];
 
-  list.utils.events.bind(
+  events.bind(
     list.listContainer.getElementsByClassName(list.searchClass),
     "keyup",
-    list.utils.events.debounce((e) => {
+    events.debounce((e) => {
       const alreadyCleared = e.target.value === "" && !list.searched;
       if (!alreadyCleared) {
         // If oninput already have resetted the list, do nothing
@@ -125,7 +127,7 @@ module.exports = (list) => {
   );
 
   // Used to detect click on HTML5 clear button
-  list.utils.events.bind(list.listContainer.getElementsByClassName(list.searchClass), "input", (e) => {
+  events.bind(list.listContainer.getElementsByClassName(list.searchClass), "input", (e) => {
     if (e.target.value === "") {
       searchMethod("");
     }

@@ -92,8 +92,8 @@ module.exports = (list) => {
 
     events.bind(pagingList.listContainer, "click", (e) => {
       const target = e.target || e.srcElement;
-      const page = list.utils.getAttribute(target, "data-page");
-      const i = list.utils.getAttribute(target, "data-i");
+      const page = target.getAttribute("data-page");
+      const i = target.getAttribute("data-i");
       if (i) {
         list.show((i - 1) * page + 1, page);
       }
