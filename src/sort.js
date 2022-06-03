@@ -6,15 +6,14 @@ module.exports = (list) => {
   const buttons = {
     els: undefined,
     clear() {
-      for (let i = 0; i < buttons.els.length; i += 1) {
-        buttons.els[i].classList.remove("asc");
-        buttons.els[i].classList.remove("desc");
-      }
+      Array.from(buttons.els).forEach((b) => {
+        b.classList.remove("asc");
+        b.classList.remove("desc");
+      });
     },
     getOrder(btn) {
-      const predefinedOrder = btn.getAttribute("data-order");
-      if (predefinedOrder === "asc" || predefinedOrder === "desc") {
-        return predefinedOrder;
+      if (btn.dataset.order === "asc" || btn.dataset.order === "desc") {
+        return btn.dataset.order;
       }
       if (btn.classList.contains("desc")) {
         return "asc";
@@ -25,27 +24,20 @@ module.exports = (list) => {
       return "asc";
     },
     getInSensitive(btn, options) {
-      const insensitive = btn.getAttribute("data-insensitive");
-      if (insensitive === "false") {
-        options.insensitive = false;
-      } else {
-        options.insensitive = true;
-      }
+      options.insensitive = !(btn.dataset.insensitive === "false");
     },
     setOrder(options) {
-      for (let i = 0; i < buttons.els.length; i += 1) {
-        const btn = buttons.els[i];
-        if (btn.getAttribute("data-sort") === options.valueName) {
-          const predefinedOrder = btn.getAttribute("data-order");
-          if (predefinedOrder === "asc" || predefinedOrder === "desc") {
-            if (predefinedOrder === options.order) {
-              btn.classList.add(options.order);
+      Array.from(buttons.els)
+        .filter((b) => b.dataset.sort === options.valueName)
+        .forEach((b) => {
+          if (b.dataset.order === "asc" || b.dataset.order === "desc") {
+            if (b.dataset.order === options.order) {
+              b.classList.add(options.order);
             }
           } else {
-            btn.classList.add(options.order);
+            b.classList.add(options.order);
           }
-        }
-      }
+        });
     },
   };
 

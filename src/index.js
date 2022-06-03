@@ -45,13 +45,11 @@ module.exports = class List {
   }
 
   _handlers() {
-    const keys = Object.keys(this.handlers);
-
-    for (let i = 0; i < keys.length; i += 1) {
-      if (this[keys[i]] && Object.prototype.hasOwnProperty.call(this.handlers, keys[i])) {
-        this.on(keys[i], this[keys[i]]);
-      }
-    }
+    Object.keys(this.handlers)
+      .filter((key) => this[key] && Object.prototype.hasOwnProperty.call(this.handlers, key))
+      .forEach((key) => {
+        this.on(key, this[key]);
+      });
   }
 
   _items() {
@@ -67,13 +65,11 @@ module.exports = class List {
     if (this._options.pagination !== undefined) {
       if (this._options.pagination === true) {
         this._options.pagination = [{}];
-      }
-      if (this._options.pagination[0] === undefined) {
+      } else if (!Array.isArray(this._options.pagination)) {
         this._options.pagination = [this._options.pagination];
       }
-      for (let i = 0; i < this._options.pagination.length; i += 1) {
-        initPagination(this._options.pagination[i]);
-      }
+
+      this._options.pagination.forEach(initPagination);
     }
   }
 
@@ -90,11 +86,7 @@ module.exports = class List {
   }
 
   toJSON() {
-    const json = [];
-    for (let i = 0; i < this.items.length; i += 1) {
-      json.push(this.items[i].values());
-    }
-    return json;
+    return this.items.flatMap((i) => i.values());
   }
 
   /*
@@ -108,21 +100,21 @@ module.exports = class List {
       this.addAsync(vals.slice(0), callback);
       return null;
     }
-    const added = [];
-    let notCreate = false;
-    if (vals[0] === undefined) {
+
+    if (!Array.isArray(vals)) {
       vals = [vals];
     }
-    for (let i = 0; i < vals.length; i += 1) {
-      let item = null;
-      notCreate = this.items.length > this.page;
-      item = new Item(vals[i], undefined, notCreate);
 
-      if (!notCreate) this.templater.set(item, item.values());
+    const added = vals.map((v) => {
+      const item = new Item(v);
 
-      this.items.push(item);
-      added.push(item);
-    }
+      if (!(this.items.length > this.page)) this.templater.set(item, item.values());
+
+      return item;
+    });
+
+    this.items = this.items.concat(added);
+
     this.update();
     return added;
   }
@@ -155,6 +147,7 @@ module.exports = class List {
   remove(valueName, value, opts) {
     let found = 0;
     let il = this.items.length;
+
     for (let i = 0; i < il; i += 1) {
       if (this.items[i].values()[valueName] === value) {
         this.templater.remove(this.items[i], opts);
@@ -197,24 +190,17 @@ module.exports = class List {
   }
 
   on(event, callback) {
-    this.handlers[event].push(callback);
+    this.handlers[event] = [...this.handlers[event], callback];
     return this;
   }
 
   off(event, callback) {
-    const e = this.handlers[event];
-    const index = e.indexOf(callback);
-    if (index > -1) {
-      e.splice(index, 1);
-    }
+    this.handlers[event] = this.handlers[event].filter((e) => e !== callback);
     return this;
   }
 
   trigger(event) {
-    let i = this.handlers[event].length;
-    while (i--) {
-      this.handlers[event][i](this);
-    }
+    this.handlers[event].forEach((h) => h(this));
     return this;
   }
 
@@ -227,20 +213,18 @@ module.exports = class List {
     (!this.filtered && !this.searched);
 
   resetFilter() {
-    const is = this.items;
-    let il = is.length;
-    while (il--) {
-      is[il].filtered = false;
-    }
+    this.items.forEach((e) => {
+      e.filtered = false;
+    });
+
     return this;
   }
 
   resetSearch() {
-    const is = this.items;
-    let il = is.length;
-    while (il--) {
-      is[il].found = false;
-    }
+    this.items.forEach((e) => {
+      e.found = false;
+    });
+
     return this;
   }
 
@@ -275,14 +259,9 @@ module.exports = class List {
       this.filtered = false;
     } else {
       this.filtered = true;
-      for (let i = 0; i < this.items.length; i += 1) {
-        const item = this.items[i];
-        if (filterFunction(item)) {
-          item.filtered = true;
-        } else {
-          item.filtered = false;
-        }
-      }
+      this.items.forEach((i) => {
+        i.filtered = !!filterFunction(i);
+      });
     }
     this.update();
     this.trigger("filterComplete");

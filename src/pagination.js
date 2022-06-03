@@ -22,10 +22,10 @@ module.exports = (list) => {
         this.dottedRight(pagingList, i, left, right, currentPage, innerWindow, currentPageItem)
       );
     },
-    dottedLeft(pagingList, i, left, right, currentPage, innerWindow) {
+    dottedLeft(_pagingList, i, left, right, currentPage, innerWindow) {
       return i === left + 1 && !this.innerWindow(i, currentPage, innerWindow) && !this.right(i, right);
     },
-    dottedRight(pagingList, i, left, right, currentPage, innerWindow, currentPageItem) {
+    dottedRight(pagingList, i, _left, right, currentPage, innerWindow, currentPageItem) {
       if (pagingList.items[currentPageItem - 1].values().dotted) {
         return false;
       }
