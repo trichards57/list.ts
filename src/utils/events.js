@@ -1,4 +1,4 @@
-var toArray = require('./to-array')
+const toArray = require("./to-array");
 
 /**
  * Bind `el` event `type` to `fn`.
@@ -9,13 +9,12 @@ var toArray = require('./to-array')
  * @param {Boolean} capture
  * @api public
  */
-
-exports.bind = function (el, type, fn, capture) {
-  el = toArray(el)
-  for (var i = 0, il = el.length; i < il; i++) {
-    el[i].addEventListener(type, fn, capture || false)
+exports.bind = (el, type, fn, capture) => {
+  const els = toArray(el);
+  for (let i = 0; i < els.length; i += 1) {
+    els[i].addEventListener(type, fn, capture || false);
   }
-}
+};
 
 /**
  * Unbind `el` event `type`'s callback `fn`.
@@ -26,13 +25,12 @@ exports.bind = function (el, type, fn, capture) {
  * @param {Boolean} capture
  * @api public
  */
-
-exports.unbind = function (el, type, fn, capture) {
-  el = toArray(el)
-  for (var i = 0, il = el.length; i < il; i++) {
-    el[i].removeEventListener(type, fn, capture || false)
+exports.unbind = (el, type, fn, capture) => {
+  const els = toArray(el);
+  for (let i = 0; i < els.length; i += 1) {
+    els[i].removeEventListener(type, fn, capture || false);
   }
-}
+};
 
 /**
  * Returns a function, that, as long as it continues to be invoked, will not
@@ -45,21 +43,19 @@ exports.unbind = function (el, type, fn, capture) {
  * @param {Boolean} immediate
  * @api public
  */
-
-exports.debounce = function (fn, wait, immediate) {
-  var timeout
+exports.debounce = (fn, wait, immediate) => {
+  let timeout;
   return wait
-    ? function () {
-        var context = this,
-          args = arguments
-        var later = function () {
-          timeout = null
-          if (!immediate) fn.apply(context, args)
-        }
-        var callNow = immediate && !timeout
-        clearTimeout(timeout)
-        timeout = setTimeout(later, wait)
-        if (callNow) fn.apply(context, args)
+    ? (...args) => {
+        const context = this;
+        const later = () => {
+          timeout = null;
+          if (!immediate) fn.apply(context, args);
+        };
+        const callNow = immediate && !timeout;
+        clearTimeout(timeout);
+        timeout = setTimeout(later, wait);
+        if (callNow) fn.apply(context, args);
       }
-    : fn
-}
+    : fn;
+};

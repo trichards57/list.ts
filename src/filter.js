@@ -1,28 +1,29 @@
-module.exports = function (list) {
-  // Add handlers
-  list.handlers.filterStart = list.handlers.filterStart || []
-  list.handlers.filterComplete = list.handlers.filterComplete || []
+/* eslint-disable no-param-reassign */
 
-  return function (filterFunction) {
-    list.trigger('filterStart')
-    list.i = 1 // Reset paging
-    list.reset.filter()
+module.exports = (list) => {
+  // Add handlers
+  list.handlers.filterStart = list.handlers.filterStart || [];
+  list.handlers.filterComplete = list.handlers.filterComplete || [];
+
+  return (filterFunction) => {
+    list.trigger("filterStart");
+    list.i = 1; // Reset paging
+    list.reset.filter();
     if (filterFunction === undefined) {
-      list.filtered = false
+      list.filtered = false;
     } else {
-      list.filtered = true
-      var is = list.items
-      for (var i = 0, il = is.length; i < il; i++) {
-        var item = is[i]
+      list.filtered = true;
+      for (let i = 0; i < list.items.length; i += 1) {
+        const item = list.items[i];
         if (filterFunction(item)) {
-          item.filtered = true
+          item.filtered = true;
         } else {
-          item.filtered = false
+          item.filtered = false;
         }
       }
     }
-    list.update()
-    list.trigger('filterComplete')
-    return list.visibleItems
-  }
-}
+    list.update();
+    list.trigger("filterComplete");
+    return list.visibleItems;
+  };
+};

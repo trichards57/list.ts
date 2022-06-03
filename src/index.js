@@ -1,253 +1,256 @@
-var naturalSort = require('string-natural-compare'),
-  events = require('./utils/events'),
-  toString = require('./utils/to-string'),
-  toArray = require('./utils/to-array')
+/* eslint-disable no-param-reassign */
+const naturalSort = require("string-natural-compare");
+const events = require("./utils/events");
+const toString = require("./utils/to-string");
+const toArray = require("./utils/to-array");
+const getItem = require("./item");
+const getAddAsync = require("./add-async");
 
-module.exports = function (id, options, values) {
-  var self = this,
-    init,
-    Item = require('./item')(self),
-    addAsync = require('./add-async')(self),
-    initPagination = require('./pagination')(self)
+module.exports = function List(id, options, values) {
+  const self = this;
+  const Item = getItem(self);
+  const addAsync = getAddAsync(self);
+  const initPagination = require("./pagination")(self);
 
-  init = {
-    start: function () {
-      self.listClass = 'list'
-      self.searchClass = 'search'
-      self.sortClass = 'sort'
-      self.page = 10000
-      self.i = 1
-      self.items = []
-      self.visibleItems = []
-      self.matchingItems = []
-      self.searched = false
-      self.filtered = false
-      self.searchColumns = undefined
-      self.searchDelay = 0
-      self.handlers = { updated: [] }
-      self.valueNames = []
+  const init = {
+    start() {
+      self.listClass = "list";
+      self.searchClass = "search";
+      self.sortClass = "sort";
+      self.page = 10000;
+      self.i = 1;
+      self.items = [];
+      self.visibleItems = [];
+      self.matchingItems = [];
+      self.searched = false;
+      self.filtered = false;
+      self.searchColumns = undefined;
+      self.searchDelay = 0;
+      self.handlers = { updated: [] };
+      self.valueNames = [];
       self.utils = {
-        events: events,
-        toString: toString,
-        naturalSort: naturalSort,
-        toArray: toArray,
-      }
+        events,
+        toString,
+        naturalSort,
+        toArray,
+      };
 
       Object.assign(self, options);
 
-      self.listContainer = typeof id === 'string' ? document.getElementById(id) : id
+      self.listContainer = typeof id === "string" ? document.getElementById(id) : id;
       if (!self.listContainer) {
-        return
+        return;
       }
-      self.list = self.listContainer.getElementsByClassName(self.listClass)[0]
+      [self.list] = self.listContainer.getElementsByClassName(self.listClass);
 
-      self.parse = require('./parse')(self)
-      self.templater = require('./templater')(self)
-      self.search = require('./search')(self)
-      self.filter = require('./filter')(self)
-      self.sort = require('./sort')(self)
-      self.fuzzySearch = require('./fuzzy-search')(self, options.fuzzySearch)
+      self.parse = require("./parse")(self);
+      self.templater = require("./templater")(self);
+      self.search = require("./search")(self);
+      self.filter = require("./filter")(self);
+      self.sort = require("./sort")(self);
+      self.fuzzySearch = require("./fuzzy-search")(self, options.fuzzySearch);
 
-      this.handlers()
-      this.items()
-      this.pagination()
+      this.handlers();
+      this.items();
+      this.pagination();
 
-      self.update()
+      self.update();
     },
-    handlers: function () {
-      for (var handler in self.handlers) {
-        if (self[handler] && self.handlers.hasOwnProperty(handler)) {
-          self.on(handler, self[handler])
+    handlers() {
+      const keys = Object.keys(self.handlers);
+
+      for (let i = 0; i < keys.length; i += 1) {
+        if (self[keys[i]] && Object.prototype.hasOwnProperty.call(self.handlers, keys[i])) {
+          self.on(keys[i], self[keys[i]]);
         }
       }
     },
-    items: function () {
-      self.parse(self.list)
+    items() {
+      self.parse(self.list);
       if (values !== undefined) {
-        self.add(values)
+        self.add(values);
       }
     },
-    pagination: function () {
+    pagination() {
       if (options.pagination !== undefined) {
         if (options.pagination === true) {
-          options.pagination = [{}]
+          options.pagination = [{}];
         }
         if (options.pagination[0] === undefined) {
-          options.pagination = [options.pagination]
+          options.pagination = [options.pagination];
         }
-        for (var i = 0, il = options.pagination.length; i < il; i++) {
-          initPagination(options.pagination[i])
+        for (let i = 0; i < options.pagination.length; i += 1) {
+          initPagination(options.pagination[i]);
         }
       }
     },
-  }
+  };
 
   /*
    * Re-parse the List, use if html have changed
    */
-  this.reIndex = function () {
-    self.items = []
-    self.visibleItems = []
-    self.matchingItems = []
-    self.searched = false
-    self.filtered = false
-    self.parse(self.list)
-  }
+  this.reIndex = () => {
+    self.items = [];
+    self.visibleItems = [];
+    self.matchingItems = [];
+    self.searched = false;
+    self.filtered = false;
+    self.parse(self.list);
+  };
 
-  this.toJSON = function () {
-    var json = []
-    for (var i = 0, il = self.items.length; i < il; i++) {
-      json.push(self.items[i].values())
+  this.toJSON = () => {
+    const json = [];
+    for (let i = 0; i < self.items.length; i += 1) {
+      json.push(self.items[i].values());
     }
-    return json
-  }
+    return json;
+  };
 
   /*
    * Add object to list
    */
-  this.add = function (values, callback) {
-    if (values.length === 0) {
-      return
+  this.add = (vals, callback) => {
+    if (vals.length === 0) {
+      return;
     }
     if (callback) {
-      addAsync(values.slice(0), callback)
-      return
+      addAsync(vals.slice(0), callback);
+      return;
     }
-    var added = [],
-      notCreate = false
-    if (values[0] === undefined) {
-      values = [values]
+    const added = [];
+    let notCreate = false;
+    if (vals[0] === undefined) {
+      vals = [vals];
     }
-    for (var i = 0, il = values.length; i < il; i++) {
-      var item = null
-      notCreate = self.items.length > self.page ? true : false
-      item = new Item(values[i], undefined, notCreate)
-      self.items.push(item)
-      added.push(item)
+    for (let i = 0; i < vals.length; i += 1) {
+      let item = null;
+      notCreate = self.items.length > self.page;
+      item = new Item(vals[i], undefined, notCreate);
+      self.items.push(item);
+      added.push(item);
     }
-    self.update()
-    return added
-  }
+    self.update();
+    return added;
+  };
 
   this.show = function (i, page) {
-    this.i = i
-    this.page = page
-    self.update()
-    return self
-  }
+    this.i = i;
+    this.page = page;
+    self.update();
+    return self;
+  };
 
   /* Removes object from list.
    * Loops through the list and removes objects where
    * property "valuename" === value
    */
-  this.remove = function (valueName, value, options) {
-    var found = 0
-    for (var i = 0, il = self.items.length; i < il; i++) {
-      if (self.items[i].values()[valueName] == value) {
-        self.templater.remove(self.items[i], options)
-        self.items.splice(i, 1)
-        il--
-        i--
-        found++
+  this.remove = (valueName, value, opts) => {
+    let found = 0;
+    let il = self.items.length;
+    for (let i = 0; i < il; i += 1) {
+      if (self.items[i].values()[valueName] === value) {
+        self.templater.remove(self.items[i], opts);
+        self.items.splice(i, 1);
+        il -= 1;
+        i -= 1;
+        found += 1;
       }
     }
-    self.update()
-    return found
-  }
+    self.update();
+    return found;
+  };
 
   /* Gets the objects in the list which
    * property "valueName" === value
    */
-  this.get = function (valueName, value) {
-    var matchedItems = []
-    for (var i = 0, il = self.items.length; i < il; i++) {
-      var item = self.items[i]
-      if (item.values()[valueName] == value) {
-        matchedItems.push(item)
+  this.get = (valueName, value) => {
+    const matchedItems = [];
+    for (let i = 0; i < self.items.length; i += 1) {
+      const item = self.items[i];
+      if (item.values()[valueName] === value) {
+        matchedItems.push(item);
       }
     }
-    return matchedItems
-  }
+    return matchedItems;
+  };
 
   /*
    * Get size of the list
    */
-  this.size = function () {
-    return self.items.length
-  }
+  this.size = () => self.items.length;
 
   /*
    * Removes all items from the list
    */
-  this.clear = function () {
-    self.templater.clear()
-    self.items = []
-    return self
-  }
+  this.clear = () => {
+    self.templater.clear();
+    self.items = [];
+    return self;
+  };
 
-  this.on = function (event, callback) {
-    self.handlers[event].push(callback)
-    return self
-  }
+  this.on = (event, callback) => {
+    self.handlers[event].push(callback);
+    return self;
+  };
 
-  this.off = function (event, callback) {
-    var e = self.handlers[event]
-    var index = e.indexOf(callback)
+  this.off = (event, callback) => {
+    const e = self.handlers[event];
+    const index = e.indexOf(callback);
     if (index > -1) {
-      e.splice(index, 1)
+      e.splice(index, 1);
     }
-    return self
-  }
+    return self;
+  };
 
-  this.trigger = function (event) {
-    var i = self.handlers[event].length
+  this.trigger = (event) => {
+    let i = self.handlers[event].length;
     while (i--) {
-      self.handlers[event][i](self)
+      self.handlers[event][i](self);
     }
-    return self
-  }
+    return self;
+  };
 
   this.reset = {
-    filter: function () {
-      var is = self.items,
-        il = is.length
+    filter() {
+      const is = self.items;
+      let il = is.length;
       while (il--) {
-        is[il].filtered = false
+        is[il].filtered = false;
       }
-      return self
+      return self;
     },
-    search: function () {
-      var is = self.items,
-        il = is.length
+    search() {
+      const is = self.items;
+      let il = is.length;
       while (il--) {
-        is[il].found = false
+        is[il].found = false;
       }
-      return self
+      return self;
     },
-  }
+  };
 
   this.update = function () {
-    var is = self.items,
-      il = is.length
+    const is = self.items;
+    const il = is.length;
 
-    self.visibleItems = []
-    self.matchingItems = []
-    self.templater.clear()
-    for (var i = 0; i < il; i++) {
+    self.visibleItems = [];
+    self.matchingItems = [];
+    self.templater.clear();
+    for (let i = 0; i < il; i += 1) {
       if (is[i].matching() && self.matchingItems.length + 1 >= self.i && self.visibleItems.length < self.page) {
-        is[i].show()
-        self.visibleItems.push(is[i])
-        self.matchingItems.push(is[i])
+        is[i].show();
+        self.visibleItems.push(is[i]);
+        self.matchingItems.push(is[i]);
       } else if (is[i].matching()) {
-        self.matchingItems.push(is[i])
-        is[i].hide()
+        self.matchingItems.push(is[i]);
+        is[i].hide();
       } else {
-        is[i].hide()
+        is[i].hide();
       }
     }
-    self.trigger('updated')
-    return self
-  }
+    self.trigger("updated");
+    return self;
+  };
 
-  init.start()
-}
+  init.start();
+};

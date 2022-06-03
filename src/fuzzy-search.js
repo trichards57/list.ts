@@ -1,67 +1,63 @@
-var events = require('./utils/events'),
-  toString = require('./utils/to-string'),
-  fuzzy = require('./utils/fuzzy')
+const events = require("./utils/events");
+const toString = require("./utils/to-string");
+const fuzzy = require("./utils/fuzzy");
 
-module.exports = function (list, options) {
-  options = options || {}
+module.exports = (list, options) => {
+  const opts = {
+    location: 0,
+    distance: 100,
+    threshold: 0.4,
+    multiSearch: true,
+    searchClass: "fuzzy-search",
+    ...options,
+  };
 
-  options = Object.assign(
-    {
-      location: 0,
-      distance: 100,
-      threshold: 0.4,
-      multiSearch: true,
-      searchClass: 'fuzzy-search',
-    },
-    options
-  )
-
-  var fuzzySearch = {
-    search: function (searchString, columns) {
+  const fuzzySearch = {
+    search(searchString, columns) {
       // Substract arguments from the searchString or put searchString as only argument
-      var searchArguments = options.multiSearch ? searchString.replace(/ +$/, '').split(/ +/) : [searchString]
+      const searchArguments = opts.multiSearch ? searchString.replace(/ +$/, "").split(/ +/) : [searchString];
 
-      for (var k = 0, kl = list.items.length; k < kl; k++) {
-        fuzzySearch.item(list.items[k], columns, searchArguments)
+      for (let k = 0; k < list.items.length; k += 1) {
+        fuzzySearch.item(list.items[k], columns, searchArguments);
       }
     },
-    item: function (item, columns, searchArguments) {
-      var found = true
-      for (var i = 0; i < searchArguments.length; i++) {
-        var foundArgument = false
-        for (var j = 0, jl = columns.length; j < jl; j++) {
+    item(item, columns, searchArguments) {
+      let found = true;
+      for (let i = 0; i < searchArguments.length; i += 1) {
+        let foundArgument = false;
+        for (let j = 0; j < columns.length; j += 1) {
           if (fuzzySearch.values(item.values(), columns[j], searchArguments[i])) {
-            foundArgument = true
+            foundArgument = true;
           }
         }
         if (!foundArgument) {
-          found = false
+          found = false;
         }
       }
-      item.found = found
+      // eslint-disable-next-line no-param-reassign
+      item.found = found;
     },
-    values: function (values, value, searchArgument) {
-      if (values.hasOwnProperty(value)) {
-        var text = toString(values[value]).toLowerCase()
+    values(values, value, searchArgument) {
+      if (Object.prototype.hasOwnProperty.call(values, value)) {
+        const text = toString(values[value]).toLowerCase();
 
-        if (fuzzy(text, searchArgument, options)) {
-          return true
+        if (fuzzy(text, searchArgument, opts)) {
+          return true;
         }
       }
-      return false
+      return false;
     },
-  }
+  };
 
   events.bind(
-    list.listContainer.getElementsByClassName(options.searchClass),
-    'keyup',
-    list.utils.events.debounce(function (e) {
-      var target = e.target || e.srcElement // IE have srcElement
-      list.search(target.value, fuzzySearch.search)
+    list.listContainer.getElementsByClassName(opts.searchClass),
+    "keyup",
+    list.utils.events.debounce((e) => {
+      list.search(e.target.value, fuzzySearch.search);
     }, list.searchDelay)
-  )
+  );
 
-  return function (str, columns) {
-    list.search(str, columns, fuzzySearch.search)
-  }
-}
+  return (str, columns) => {
+    list.search(str, columns, fuzzySearch.search);
+  };
+};

@@ -1,16 +1,16 @@
-module.exports = function (list) {
-  var addAsync = function (values, callback, items) {
-    var valuesToAdd = values.splice(0, 50)
-    items = items || []
-    items = items.concat(list.add(valuesToAdd))
+module.exports = (list) => {
+  const addAsync = (values, callback, items) => {
+    const valuesToAdd = values.splice(0, 50);
+    let itms = items || [];
+    itms = itms.concat(list.add(valuesToAdd));
     if (values.length > 0) {
-      setTimeout(function () {
-        addAsync(values, callback, items)
-      }, 1)
+      setTimeout(() => {
+        addAsync(values, callback, itms);
+      }, 1);
     } else {
-      list.update()
-      callback(items)
+      list.update();
+      callback(itms);
     }
-  }
-  return addAsync
-}
+  };
+  return addAsync;
+};

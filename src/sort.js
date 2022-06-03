@@ -1,87 +1,86 @@
-const toString = require('./utils/to-string')
+/* eslint-disable no-param-reassign */
+const toString = require("./utils/to-string");
 
-module.exports = function (list) {
-  var buttons = {
+module.exports = (list) => {
+  const buttons = {
     els: undefined,
-    clear: function () {
-      for (var i = 0, il = buttons.els.length; i < il; i++) {
-        buttons.els[i].classList.remove('asc')
-        buttons.els[i].classList.remove('desc')
+    clear() {
+      for (let i = 0; i < buttons.els.length; i += 1) {
+        buttons.els[i].classList.remove("asc");
+        buttons.els[i].classList.remove("desc");
       }
     },
-    getOrder: function (btn) {
-      var predefinedOrder = btn.getAttribute('data-order')
-      if (predefinedOrder == 'asc' || predefinedOrder == 'desc') {
-        return predefinedOrder
-      } else if (btn.classList.contains('desc')) {
-        return 'asc'
-      } else if (btn.classList.contains('asc')) {
-        return 'desc'
+    getOrder(btn) {
+      const predefinedOrder = btn.getAttribute("data-order");
+      if (predefinedOrder === "asc" || predefinedOrder === "desc") {
+        return predefinedOrder;
+      }
+      if (btn.classList.contains("desc")) {
+        return "asc";
+      }
+      if (btn.classList.contains("asc")) {
+        return "desc";
+      }
+      return "asc";
+    },
+    getInSensitive(btn, options) {
+      const insensitive = btn.getAttribute("data-insensitive");
+      if (insensitive === "false") {
+        options.insensitive = false;
       } else {
-        return 'asc'
+        options.insensitive = true;
       }
     },
-    getInSensitive: function (btn, options) {
-      var insensitive = btn.getAttribute('data-insensitive')
-      if (insensitive === 'false') {
-        options.insensitive = false
-      } else {
-        options.insensitive = true
-      }
-    },
-    setOrder: function (options) {
-      for (var i = 0, il = buttons.els.length; i < il; i++) {
-        var btn = buttons.els[i]
-        if (btn.getAttribute('data-sort') !== options.valueName) {
-          continue
-        }
-        var predefinedOrder = btn.getAttribute('data-order')
-        if (predefinedOrder == 'asc' || predefinedOrder == 'desc') {
-          if (predefinedOrder == options.order) {
-            btn.classList.add(options.order)
+    setOrder(options) {
+      for (let i = 0; i < buttons.els.length; i += 1) {
+        const btn = buttons.els[i];
+        if (btn.getAttribute("data-sort") === options.valueName) {
+          const predefinedOrder = btn.getAttribute("data-order");
+          if (predefinedOrder === "asc" || predefinedOrder === "desc") {
+            if (predefinedOrder === options.order) {
+              btn.classList.add(options.order);
+            }
+          } else {
+            btn.classList.add(options.order);
           }
-        } else {
-          btn.classList.add(options.order)
         }
       }
     },
-  }
+  };
 
-  var sort = function () {
-    list.trigger('sortStart')
-    var options = {}
+  const sort = (...args) => {
+    list.trigger("sortStart");
+    let options = {};
 
-    var target = arguments[0].currentTarget || arguments[0].srcElement || undefined
+    const target = args[0].currentTarget || args[0].srcElement || undefined;
 
     if (target) {
-      options.valueName = target.getAttribute('data-sort')
-      buttons.getInSensitive(target, options)
-      options.order = buttons.getOrder(target)
+      options.valueName = target.getAttribute("data-sort");
+      buttons.getInSensitive(target, options);
+      options.order = buttons.getOrder(target);
     } else {
-      options = arguments[1] || options
-      options.valueName = arguments[0]
-      options.order = options.order || 'asc'
-      options.insensitive = typeof options.insensitive == 'undefined' ? true : options.insensitive
+      options = args[1] || options;
+      [options.valueName] = args;
+      options.order = options.order || "asc";
+      options.insensitive = typeof options.insensitive === "undefined" ? true : options.insensitive;
     }
 
-    buttons.clear()
-    buttons.setOrder(options)
+    buttons.clear();
+    buttons.setOrder(options);
 
     // caseInsensitive
     // alphabet
-    var customSortFunction = options.sortFunction || list.sortFunction || null,
-      multi = options.order === 'desc' ? -1 : 1,
-      sortFunction
+    const customSortFunction = options.sortFunction || list.sortFunction || null;
+    const multi = options.order === "desc" ? -1 : 1;
+    let sortFunction;
 
     if (customSortFunction) {
-      sortFunction = function (itemA, itemB) {
-        return customSortFunction(itemA, itemB, options) * multi
-      }
+      sortFunction = (itemA, itemB) => customSortFunction(itemA, itemB, options) * multi;
     } else {
-      sortFunction = function (itemA, itemB) {
-        const sortOptions = {}
-        sortOptions.alphabet = list.alphabet || options.alphabet || undefined
-        sortOptions.caseInsensitive = !sortOptions.alphabet && options.insensitive
+      sortFunction = (itemA, itemB) => {
+        const sortOptions = {};
+        sortOptions.alphabet = list.alphabet || options.alphabet || undefined;
+        sortOptions.caseInsensitive = !sortOptions.alphabet && options.insensitive;
 
         return (
           list.utils.naturalSort(
@@ -89,23 +88,23 @@ module.exports = function (list) {
             toString(itemB.values()[options.valueName]),
             sortOptions
           ) * multi
-        )
-      }
+        );
+      };
     }
 
-    list.items.sort(sortFunction)
-    list.update()
-    list.trigger('sortComplete')
-  }
+    list.items.sort(sortFunction);
+    list.update();
+    list.trigger("sortComplete");
+  };
 
   // Add handlers
-  list.handlers.sortStart = list.handlers.sortStart || []
-  list.handlers.sortComplete = list.handlers.sortComplete || []
+  list.handlers.sortStart = list.handlers.sortStart || [];
+  list.handlers.sortComplete = list.handlers.sortComplete || [];
 
-  buttons.els = list.listContainer.getElementsByClassName(list.sortClass)
-  list.utils.events.bind(buttons.els, 'click', sort)
-  list.on('searchStart', buttons.clear)
-  list.on('filterStart', buttons.clear)
+  buttons.els = list.listContainer.getElementsByClassName(list.sortClass);
+  list.utils.events.bind(buttons.els, "click", sort);
+  list.on("searchStart", buttons.clear);
+  list.on("filterStart", buttons.clear);
 
-  return sort
-}
+  return sort;
+};
