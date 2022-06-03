@@ -2,7 +2,6 @@ var classes = require('./utils/classes'),
   events = require('./utils/events'),
   extend = require('./utils/extend'),
   toString = require('./utils/to-string'),
-  getByClass = require('./utils/get-by-class'),
   fuzzy = require('./utils/fuzzy')
 
 module.exports = function (list, options) {
@@ -56,7 +55,7 @@ module.exports = function (list, options) {
   }
 
   events.bind(
-    getByClass(list.listContainer, options.searchClass),
+    list.listContainer.getElementsByClassName(options.searchClass),
     'keyup',
     list.utils.events.debounce(function (e) {
       var target = e.target || e.srcElement // IE have srcElement

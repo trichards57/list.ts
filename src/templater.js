@@ -133,11 +133,11 @@ var Templater = function (list) {
         valueName = valueNames[i]
       if (valueName.data) {
         for (var j = 0, jl = valueName.data.length; j < jl; j++) {
-          values[valueName.data[j]] = list.utils.getAttribute(item.elm, 'data-' + valueName.data[j])
+          values[valueName.data[j]] = item.elm.getAttribute('data-' + valueName.data[j])
         }
       } else if (valueName.attr && valueName.name) {
         elm = item.elm.getElementsByClassName(valueName.name)[0]
-        values[valueName.name] = elm ? list.utils.getAttribute(elm, valueName.attr) : ''
+        values[valueName.name] = elm ? elm.getAttribute(valueName.attr) : ''
       } else {
         elm = item.elm.getElementsByClassName(valueName)[0]
         values[valueName] = elm ? elm.innerHTML : ''
