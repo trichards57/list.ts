@@ -59,7 +59,6 @@ describe('Defaults', function () {
     expect(list.utils.events.bind).toBeInstanceOf(Function)
     expect(list.utils.events.unbind).toBeInstanceOf(Function)
     expect(list.utils.extend).toBeInstanceOf(Function)
-    expect(list.utils.indexOf).toBeInstanceOf(Function)
     expect(list.utils.toString).toBeInstanceOf(Function)
   })
 })

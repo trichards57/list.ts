@@ -198,7 +198,7 @@ module.exports = function (id, options, values) {
 
   this.off = function (event, callback) {
     var e = self.handlers[event]
-    var index = indexOf(e, callback)
+    var index = e.indexOf(callback)
     if (index > -1) {
       e.splice(index, 1)
     }
